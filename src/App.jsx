@@ -4,122 +4,61 @@ import { generateObyektivka } from './service'
 
 function App() {
   const [formData, setFormData] = useState({
-    lastName: 'Ayubxon',
-    firstName: 'Obidov',
-    middleName: 'Oybekovich',
-    photo: null, // bu rasm fayli bo'ladi (formda file input orqali beriladi)
-    currentJobDate: '2020-09-01',
-    currentJobFull: 'Toshkent Axborot Texnologiyalari Universiteti, Kafedra mudiri',
-    birthDate: '1985-06-15',
-    birthPlace: 'Toshkent shahri',
-    nationality: 'O‘zbek',
-    education: 'TATU',
-    specialization: 'Kompyuter injiniringi',
-    party: 'Yo‘q',
-  
-    // Dinamik qism
-    educations: [
-      {
-        institution: 'TATU',
-        year: '2007',
-        degree: 'Bakalavr'
-      },
-      {
-        institution: 'TATU magistratura',
-        year: '2009',
-        degree: 'Magistr'
-      }
-    ],
-    academicDegrees: [
-      {
-        degree: 'PhD',
-        year: '2015',
-        field: 'Axborot texnologiyalari'
-      }
-    ],
-    academicTitles: [
-      {
-        title: 'Dotsent',
-        year: '2020'
-      }
-    ],
-    foreignLanguages: [
-      {
-        language: 'Ingliz tili',
-        level: 'B2'
-      },
-      {
-        language: 'Rus tili',
-        level: 'C1'
-      }
-    ],
-    awards: [
-      {
-        award: '“Oliy ta’lim a’lochisi”',
-        year: '2022'
-      },
-      {
-        award: '“Yilning eng yaxshi ustozi”',
-        year: '2023'
-      }
-    ],
-    workExperiences: [
-      {
-        position: 'O‘qituvchi',
-        organization: 'TATU',
-        startDate: '2010',
-        endDate: '2015',
-        responsibilities: 'Dars berish, ilmiy faoliyat'
-      },
-      {
-        position: 'Katta o‘qituvchi',
-        organization: 'TATU',
-        startDate: '2015',
-        endDate: '2020',
-        responsibilities: 'Ilmiy ishlar, kurslar yuritish'
-      },
-      {
-        position: 'Kafedra mudiri',
-        organization: 'TATU',
-        startDate: '2020',
-        endDate: 'hozirgi kungacha',
-        responsibilities: 'Kafedrani boshqarish'
-      }
-    ],
-    familyRelations: [
-      {
-        relationType: 'Ota',
-        fullName: 'Obidov Qodirjon',
-        birthYear: '1960',
-        birthPlace: 'Farg‘ona viloyati',
-        workplace: 'Nafaqada',
-        position: '',
-        address: 'Farg‘ona viloyati, Qo‘qon shahri',
-        isDead: false
-      },
-      {
-        relationType: 'Ona',
-        fullName: 'Obidova Saodatxon',
-        birthYear: '1963',
-        birthPlace: 'Farg‘ona viloyati',
-        workplace: 'Uy bekasi',
-        position: '',
-        address: 'Farg‘ona viloyati, Qo‘qon shahri',
-        isDead: false
-      },
-      {
-        relationType: 'Turmush o‘rtog‘i',
-        fullName: 'Obidova Gulbahor',
-        birthYear: '1987',
-        birthPlace: 'Toshkent shahri',
-        workplace: 'Maktab o‘qituvchisi',
-        position: 'Ingliz tili fani o‘qituvchisi',
-        address: 'Toshkent shahri, Yakkasaroy tumani',
-        isDead: false
-      }
-    ]
-  });
-  
+    lastName: '',
+    firstName: '',
+    middleName: '',
+    photo: null,
+    currentJobDate: '',
+    currentJobFull: '',
+    birthDate: '',
+    birthPlace: '',
+    nationality: '',
+    education: '',
+    specialization: '',
+    party: '',
+
+    // Dynamic sections
+    educations: [{
+      institution: '',
+      year: '',
+      degree: ''
+    }],
+    academicDegrees: [{
+      degree: '',
+      year: '',
+      field: ''
+    }],
+    academicTitles: [{
+      title: '',
+      year: ''
+    }],
+    foreignLanguages: [{
+      language: '',
+      level: ''
+    }],
+    awards: [{
+      award: '',
+      year: ''
+    }],
+    workExperiences: [{
+      position: '',
+      organization: '',
+      startDate: '',
+      endDate: '',
+      responsibilities: ''
+    }],
+
+    familyRelations: [{
+      relationType: '',
+      fullName: '',
+      birthYear: '',
+      birthPlace: '',
+      workplace: '',
+      position: '',
+      address: '',
+      isDead: false
+    }]
+  })
 
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
