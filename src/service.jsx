@@ -1,10 +1,10 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import uploadFile from "./service/fileService.jsx";
 
 export async function generateObyektivka(formData) {
   const doc = new jsPDF();
 
-  // Rasm joylash (agar bor bo‘lsa)
   if (formData.photo) {
     const imageData = await toBase64(formData.photo);
     doc.addImage(imageData, "JPEG", 150, 10, 40, 50); // o'ng yuqoriga
@@ -115,6 +115,24 @@ export async function generateObyektivka(formData) {
     styles: { font: "times", fontSize: 10 },
     headStyles: { fillColor: [41, 128, 185] },
   });
+
+  const pdfBlob = doc.output('blob'); // Convert PDF to Blob
+  const file = new File([pdfBlob], "obyektivka.pdf", { type: "application/pdf" });
+
+  const result = await uploadFile(file,JSON.stringify({
+    "firstName": formData.firstName,
+    "lastName": formData.lastName,
+    "birthDate": formData.birthDate,
+    "currentJobDate": formData.currentJobDate,
+    "currentJobFull": formData.currentJobFull,
+    "nationality": formData.nationality
+  }));
+
+  if (result.success) {
+    alert('File uploaded successfully!');
+  } else {
+    alert('File upload failed: ' + result.message);
+  }
 
   doc.save("obyektivka.pdf");
 }
