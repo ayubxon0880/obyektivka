@@ -196,8 +196,10 @@ export async function generatePDF(formData) {
     if (result.success) {
         doc.save("obyektivka.pdf");
         alert('Ma\'lumotnoma muvaffaqiyatli yaratildi va yuklandi!');
+        return true;
     } else {
         alert(`Xatolik yuz berdi , qaytadan urinib ko'ring, rasm hajmi 10MB dan oshmaslik kerak !`);
+        return false;
     }
 }
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import {generatePDF} from "../service/pdfService.jsx";
 
 const PersonalInfoForm = () => {
@@ -35,7 +35,8 @@ const PersonalInfoForm = () => {
         ]
     });
     const [workExperiences, setWorkExperiences] = useState([]);
-    */}
+    */
+    }
 
     const [formData, setFormData] = useState({
         familya: 'Yuldashev',
@@ -125,7 +126,7 @@ const PersonalInfoForm = () => {
     };
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
@@ -254,13 +255,18 @@ const PersonalInfoForm = () => {
         setWorkExperiences(newExperiences);
     };
 
+    const [loading, setLoding] = useState(false);
     const handleSubmit = (e) => {
+        setLoding(true);
         e.preventDefault();
         const finalData = {
             ...formData,
             mehnatFaoliyati: workExperiences
         };
-        generatePDF(finalData);
+        generatePDF(finalData).then((res) => {
+            console.log(res);
+            setLoding(false);
+        });
     };
 
     const nextStep = () => {
@@ -282,10 +288,12 @@ const PersonalInfoForm = () => {
                 <div className="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 -z-10"></div>
                 {[1, 2, 3].map((step) => (
                     <div key={step} className="flex flex-col items-center">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${currentStep >= step ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-600'} font-medium`}>
+                        <div
+                            className={`w-10 h-10 rounded-full flex items-center justify-center ${currentStep >= step ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-600'} font-medium`}>
                             {step}
                         </div>
-                        <span className={`mt-2 text-sm ${currentStep >= step ? 'text-teal-600 font-medium' : 'text-gray-500'}`}>
+                        <span
+                            className={`mt-2 text-sm ${currentStep >= step ? 'text-teal-600 font-medium' : 'text-gray-500'}`}>
                             {step === 1 && 'Shaxsiy ma\'lumotlar'}
                             {step === 2 && 'Ish faoliyati'}
                             {step === 3 && 'Oilaviy ma\'lumotlar'}
@@ -361,7 +369,8 @@ const PersonalInfoForm = () => {
                                     onChange={handleFileChange}
                                 />
                                 {errors.photo && <p className="mt-1 text-sm text-red-600">{errors.photo}</p>}
-                                <small className="text-gray-500 text-xs">.jpg, .jpeg yoki .png formatida, maksimum 1MB</small>
+                                <small className="text-gray-500 text-xs">.jpg, .jpeg yoki .png formatida, maksimum
+                                    1MB</small>
                             </div>
                         </div>
 
@@ -381,7 +390,8 @@ const PersonalInfoForm = () => {
                                         value={formData.tugilganSana}
                                         onChange={handleInputChange}
                                     />
-                                    {errors.tugilganSana && <p className="mt-1 text-sm text-red-600">{errors.tugilganSana}</p>}
+                                    {errors.tugilganSana &&
+                                        <p className="mt-1 text-sm text-red-600">{errors.tugilganSana}</p>}
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -396,7 +406,8 @@ const PersonalInfoForm = () => {
                                         value={formData.tugilganJoyi}
                                         onChange={handleInputChange}
                                     />
-                                    {errors.tugilganJoyi && <p className="mt-1 text-sm text-red-600">{errors.tugilganJoyi}</p>}
+                                    {errors.tugilganJoyi &&
+                                        <p className="mt-1 text-sm text-red-600">{errors.tugilganJoyi}</p>}
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -437,7 +448,8 @@ const PersonalInfoForm = () => {
                             <h3 className="text-lg font-semibold text-teal-800 mb-4">Ta'lim haqida ma'lumot</h3>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Tamomlagan o'quv muassasalari</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Tamomlagan o'quv
+                                        muassasalari</label>
                                     {formData.tamomlagan.map((item, index) => (
                                         <div key={index} className="mb-2 flex gap-2 items-center">
                                             <div className="flex-1">
@@ -493,7 +505,8 @@ const PersonalInfoForm = () => {
                             <div className="space-y-6">
                                 {/* Languages */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Biladigan chet tillari</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Biladigan chet
+                                        tillari</label>
                                     {formData.chetTillari.map((item, index) => (
                                         <div key={`chet-tillari-${index}`} className="mb-2 flex gap-2 items-center">
                                             <input
@@ -524,7 +537,8 @@ const PersonalInfoForm = () => {
 
                                 {/* Academic Degrees */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Ilmiy darajalari</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Ilmiy
+                                        darajalari</label>
                                     {formData.ilmiyDarajasi.map((item, index) => (
                                         <div key={`ilmiy-darajasi-${index}`} className="mb-2 flex gap-2 items-center">
                                             <input
@@ -555,7 +569,8 @@ const PersonalInfoForm = () => {
 
                                 {/* Academic Titles */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Ilmiy unvonlari</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Ilmiy
+                                        unvonlari</label>
                                     {formData.ilmiyUnvoni.map((item, index) => (
                                         <div key={`ilmiy-unvoni-${index}`} className="mb-2 flex gap-2 items-center">
                                             <input
@@ -586,7 +601,8 @@ const PersonalInfoForm = () => {
 
                                 {/* Awards */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Davlat mukofotlari</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Davlat
+                                        mukofotlari</label>
                                     {formData.mukofotlari.map((item, index) => (
                                         <div key={`mukofotlar-${index}`} className="mb-2 flex gap-2 items-center">
                                             <input
@@ -617,7 +633,8 @@ const PersonalInfoForm = () => {
 
                                 {/* Party Membership */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Partiyaviyligi</label>
+                                    <label
+                                        className="block text-sm font-medium text-gray-700 mb-1">Partiyaviyligi</label>
                                     <input
                                         type="text"
                                         placeholder="O'zbekiston Xalq demokratik partiyasi a'zosi"
@@ -675,7 +692,8 @@ const PersonalInfoForm = () => {
                                         value={formData.joriyLavozimSanasi}
                                         onChange={handleInputChange}
                                     />
-                                    {errors.joriyLavozimSanasi && <p className="mt-1 text-sm text-red-600">{errors.joriyLavozimSanasi}</p>}
+                                    {errors.joriyLavozimSanasi &&
+                                        <p className="mt-1 text-sm text-red-600">{errors.joriyLavozimSanasi}</p>}
                                 </div>
 
                                 <div>
@@ -691,14 +709,16 @@ const PersonalInfoForm = () => {
                                         value={formData.joriyLavozimToLiq}
                                         onChange={handleInputChange}
                                     />
-                                    {errors.joriyLavozimToLiq && <p className="mt-1 text-sm text-red-600">{errors.joriyLavozimToLiq}</p>}
+                                    {errors.joriyLavozimToLiq &&
+                                        <p className="mt-1 text-sm text-red-600">{errors.joriyLavozimToLiq}</p>}
                                 </div>
                             </div>
                         </div>
 
                         <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-lg font-semibold text-teal-800 mb-4">Mehnat faoliyati tarixi</h3>
-                            {errors.workExperiences && <p className="text-sm text-red-600 mb-2">{errors.workExperiences}</p>}
+                            {errors.workExperiences &&
+                                <p className="text-sm text-red-600 mb-2">{errors.workExperiences}</p>}
                             {workExperiences.map((exp, index) => (
                                 <div key={`work-exp-${index}`} className="mb-4 space-y-2">
                                     <div className="flex items-center gap-2">
@@ -916,12 +936,18 @@ const PersonalInfoForm = () => {
                             >
                                 ← Orqaga
                             </button>
-                            <button
-                                type="submit"
-                                className="px-6 py-2 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-md shadow"
-                            >
-                                Ma'lumotlarni yuborish
-                            </button>
+                            {
+                                loading ? <div
+                                        className={`animate-spin rounded-full h-10 w-10 border-4 border-gray-200 border-t-teal-600`}>
+                                        <span className="sr-only">Loading...</span>
+                                    </div> :
+                                    <button
+                                        type="submit"
+                                        className="px-6 py-2 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-md shadow"
+                                    >
+                                        Ma'lumotlarni yuborish
+                                    </button>
+                            }
                         </div>
                     </div>
                 )}
