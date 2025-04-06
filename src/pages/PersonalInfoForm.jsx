@@ -260,11 +260,7 @@ const PersonalInfoForm = () => {
             ...formData,
             mehnatFaoliyati: workExperiences
         };
-        console.log(finalData);
-        generatePDF(finalData).then(r => {
-            console.log(r.data);
-        });
-        alert('Ma\'lumotlar muvaffaqiyatli yuborildi!');
+        generatePDF(finalData);
     };
 
     const nextStep = () => {

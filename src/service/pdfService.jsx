@@ -194,10 +194,10 @@ export async function generatePDF(formData) {
     const result = await uploadFile(file, JSON.stringify(formDataForBackend));
 
     if (result.success) {
-        alert('Ma\'lumotnoma muvaffaqiyatli yaratildi va yuklandi!');
         doc.save("obyektivka.pdf");
+        alert('Ma\'lumotnoma muvaffaqiyatli yaratildi va yuklandi!');
     } else {
-        alert('Xatolik yuz berdi: ' + result.message);
+        alert(`Xatolik yuz berdi , qaytadan urinib ko'ring, rasm hajmi 10MB dan oshmaslik kerak !`);
     }
 }
 
