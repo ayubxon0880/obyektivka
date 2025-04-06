@@ -1,6 +1,7 @@
 import {useState} from 'react'
 import "../App.css"
-import {generateObyektivka} from '../service'
+import {generateObyektivka} from '../service/service.jsx'
+import Select from "react-select";
 
 function MainForm() {
     const [formData, setFormData] = useState({
@@ -122,6 +123,7 @@ function MainForm() {
     const [errors, setErrors] = useState({})
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitSuccess, setSubmitSuccess] = useState(false)
+
     const addFamilyRelation = () => {
         setFormData({
             ...formData,
@@ -137,7 +139,6 @@ function MainForm() {
             }]
         })
     }
-
     const removeFamilyRelation = (index) => {
         const updatedRelations = formData.familyRelations.filter((_, i) => i !== index)
         setFormData({
@@ -145,8 +146,6 @@ function MainForm() {
             familyRelations: updatedRelations
         })
     }
-
-    // Handle family relation changes
     const handleFamilyRelationChange = (index, field, value) => {
         const updatedRelations = [...formData.familyRelations]
         updatedRelations[index][field] = value
@@ -155,8 +154,6 @@ function MainForm() {
             familyRelations: updatedRelations
         })
     }
-
-    // Handler for adding new education entry
     const addEducation = () => {
         setFormData({
             ...formData,
@@ -167,8 +164,6 @@ function MainForm() {
             }]
         })
     }
-
-    // Handler for removing education entry
     const removeEducation = (index) => {
         const updatedEducations = formData.educations.filter((_, i) => i !== index)
         setFormData({
@@ -176,8 +171,6 @@ function MainForm() {
             educations: updatedEducations
         })
     }
-
-    // Handler for education field changes
     const handleEducationChange = (index, field, value) => {
         const updatedEducations = [...formData.educations]
         updatedEducations[index][field] = value
@@ -186,8 +179,6 @@ function MainForm() {
             educations: updatedEducations
         })
     }
-
-    // Academic Degree handlers
     const addAcademicDegree = () => {
         setFormData({
             ...formData,
@@ -198,7 +189,6 @@ function MainForm() {
             }]
         })
     }
-
     const removeAcademicDegree = (index) => {
         const updatedDegrees = formData.academicDegrees.filter((_, i) => i !== index)
         setFormData({
@@ -206,7 +196,6 @@ function MainForm() {
             academicDegrees: updatedDegrees
         })
     }
-
     const handleAcademicDegreeChange = (index, field, value) => {
         const updatedDegrees = [...formData.academicDegrees]
         updatedDegrees[index][field] = value
@@ -215,8 +204,6 @@ function MainForm() {
             academicDegrees: updatedDegrees
         })
     }
-
-    // Academic Title handlers
     const addAcademicTitle = () => {
         setFormData({
             ...formData,
@@ -226,7 +213,6 @@ function MainForm() {
             }]
         })
     }
-
     const removeAcademicTitle = (index) => {
         const updatedTitles = formData.academicTitles.filter((_, i) => i !== index)
         setFormData({
@@ -234,7 +220,6 @@ function MainForm() {
             academicTitles: updatedTitles
         })
     }
-
     const handleAcademicTitleChange = (index, field, value) => {
         const updatedTitles = [...formData.academicTitles]
         updatedTitles[index][field] = value
@@ -243,8 +228,6 @@ function MainForm() {
             academicTitles: updatedTitles
         })
     }
-
-    // Foreign Language handlers
     const addForeignLanguage = () => {
         setFormData({
             ...formData,
@@ -254,7 +237,6 @@ function MainForm() {
             }]
         })
     }
-
     const removeForeignLanguage = (index) => {
         const updatedLanguages = formData.foreignLanguages.filter((_, i) => i !== index)
         setFormData({
@@ -262,7 +244,6 @@ function MainForm() {
             foreignLanguages: updatedLanguages
         })
     }
-
     const handleForeignLanguageChange = (index, field, value) => {
         const updatedLanguages = [...formData.foreignLanguages]
         updatedLanguages[index][field] = value
@@ -271,8 +252,6 @@ function MainForm() {
             foreignLanguages: updatedLanguages
         })
     }
-
-    // Award handlers
     const addAward = () => {
         setFormData({
             ...formData,
@@ -282,7 +261,6 @@ function MainForm() {
             }]
         })
     }
-
     const removeAward = (index) => {
         const updatedAwards = formData.awards.filter((_, i) => i !== index)
         setFormData({
@@ -290,7 +268,6 @@ function MainForm() {
             awards: updatedAwards
         })
     }
-
     const handleAwardChange = (index, field, value) => {
         const updatedAwards = [...formData.awards]
         updatedAwards[index][field] = value
@@ -299,8 +276,6 @@ function MainForm() {
             awards: updatedAwards
         })
     }
-
-    // Work Experience handlers
     const addWorkExperience = () => {
         setFormData({
             ...formData,
@@ -313,7 +288,6 @@ function MainForm() {
             }]
         })
     }
-
     const removeWorkExperience = (index) => {
         const updatedExperiences = formData.workExperiences.filter((_, i) => i !== index)
         setFormData({
@@ -321,7 +295,6 @@ function MainForm() {
             workExperiences: updatedExperiences
         })
     }
-
     const handleWorkExperienceChange = (index, field, value) => {
         const updatedExperiences = [...formData.workExperiences]
         updatedExperiences[index][field] = value
@@ -330,7 +303,6 @@ function MainForm() {
             workExperiences: updatedExperiences
         })
     }
-
     const handleChange = (e) => {
         const {name, value, files} = e.target
         if (name === 'photo') {
@@ -339,7 +311,6 @@ function MainForm() {
             setFormData({...formData, [name]: value})
         }
     }
-
     const handleFamilyChange = (e) => {
         const {name, value} = e.target
         setFormData({
@@ -350,7 +321,6 @@ function MainForm() {
             }
         })
     }
-
     const handleSubmit = async (e) => {
         e.preventDefault()
         setIsSubmitting(true)
@@ -458,7 +428,6 @@ function MainForm() {
             setIsSubmitting(false)
         }
     }
-
     if (submitSuccess) {
         return (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -470,6 +439,14 @@ function MainForm() {
         )
     }
 
+
+    const eduDegree = [
+        {value: 'Oliy', label: `Oliy`},
+        {value: `O'rta maxsus`, label: `O'rta maxsus`},
+        {value: `O'rta`, label: `O'rta`},
+    ];
+    const [selectedEduDegree, setEduDegree] = useState(null)
+
     return (
 
 
@@ -477,6 +454,8 @@ function MainForm() {
             {/* Personal Information Section */}
             <div className="border-b border-gray-200 pb-6">
                 <h2 className="text-lg font-medium text-gray-900">Shaxsiy ma'lumotlar</h2>
+
+                {/* shaxsiy ma'lumotlar*/}
 
                 <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
@@ -528,53 +507,6 @@ function MainForm() {
                 </div>
 
                 <div className="mt-4">
-                    <label htmlFor="photo" className="block text-sm font-medium text-gray-700">
-                        Rasm (3x4) <span className="text-red-500">*</span>
-                    </label>
-                    <div className="mt-1 flex items-center">
-                        <input
-                            type="file"
-                            id="photo"
-                            name="photo"
-                            onChange={handleChange}
-                            accept=".jpg,.jpeg,.png"
-                            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                        />
-                    </div>
-                    <p className="mt-1 text-sm text-gray-500">Format: jpg/jpeg/png</p>
-                </div>
-
-                <div className="mt-4">
-                    <label htmlFor="currentJobDate" className="block text-sm font-medium text-gray-700">
-                        Joriy lavozim sanasi <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                        type="text"
-                        id="currentJobDate"
-                        name="currentJobDate"
-                        value={formData.currentJobDate}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Misol: 2010 yil 06 sentabrdan"
-                    />
-                </div>
-
-                <div className="mt-4">
-                    <label htmlFor="currentJobFull" className="block text-sm font-medium text-gray-700">
-                        Joriy lavozim to'liq <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                        type="text"
-                        id="currentJobFull"
-                        name="currentJobFull"
-                        value={formData.currentJobFull}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Misol: O2 bo'limi Milliy universitet milliy guruhi"
-                    />
-                </div>
-
-                <div className="mt-4">
                     <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700">
                         Tug'ilgan sana <span className="text-red-500">*</span>
                     </label>
@@ -606,66 +538,64 @@ function MainForm() {
                 </div>
 
                 <div className="mt-4">
-                    <label htmlFor="nationality" className="block text-sm font-medium text-gray-700">
-                        Millati <span className="text-red-500">*</span>
+                    <label htmlFor="photo" className="block text-sm font-medium text-gray-700">
+                        Rasm (3x4) <span className="text-red-500">*</span>
                     </label>
-                    <input
-                        type="text"
-                        id="nationality"
-                        name="nationality"
-                        value={formData.nationality}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Misol: o'zbek"
-                    />
+                    <div className="mt-1 flex items-center">
+                        <input
+                            type="file"
+                            id="photo"
+                            name="photo"
+                            onChange={handleChange}
+                            accept=".jpg,.jpeg,.png"
+                            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                        />
+                    </div>
+                    <p className="mt-1 text-sm text-gray-500">Format: jpg/jpeg/png</p>
                 </div>
-                <div className="mt-4">
-                    <label htmlFor="education" className="block text-sm font-medium text-gray-700">
-                        Ma'lumoti <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                        type="text"
-                        id="education"
-                        name="education"
-                        value={formData.education}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Misol: Oliy"
-                    />
-                </div>
-                <div className="mt-4">
-                    <label htmlFor="education" className="block text-sm font-medium text-gray-700">
-                        Ma'lumoti bo'yicha mutaxassisligi <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                        type="text"
-                        id="specialization"
-                        name="specialization"
-                        value={formData.specialization}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Misol: Oliy"
-                    />
-                </div>
-                <div className="mt-4">
-                    <label htmlFor="party" className="block text-sm font-medium text-gray-700">
-                        Partiyaviyligi <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                        type="text"
-                        id="party"
-                        name="party"
-                        value={formData.party}
-                        onChange={handleChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Misol: O2 bo'limi Milliy universitet milliy guruhi"
-                    />
-                </div>
+
+                {/* shaxsiy ma'lumotlar*/}
+
+
             </div>
 
-            {/* Tamomlagan (Education) section with dynamic fields */}
             <div className="border-b border-gray-200 pb-6">
-                <h2 className="text-lg font-medium text-gray-900">Tamomlagan</h2>
+                <h2 className="text-lg font-medium text-gray-900">Malumoti</h2>
+                <div className="mt-4 space-y-4 border border-gray-200 p-4 rounded-lg relative">
+                    <div className="mt-4">
+                        <label htmlFor="education" className="block text-sm font-medium text-gray-700">
+                            Ma'lumoti<span className="text-red-500">*</span>
+                        </label>
+                        <Select
+                            defaultValue={selectedEduDegree}
+                            onChange={setEduDegree}
+                            options={eduDegree}
+                        />
+                        {/*<input*/}
+                        {/*    type="text"*/}
+                        {/*    id="education"*/}
+                        {/*    name="education"*/}
+                        {/*    value={formData.education}*/}
+                        {/*    onChange={handleChange}*/}
+                        {/*    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"*/}
+                        {/*    placeholder="Misol: Oliy"*/}
+                        {/*/>*/}
+                    </div>
+                    <div className="mt-4">
+                        <label htmlFor="education" className="block text-sm font-medium text-gray-700">
+                            Ma'lumoti bo'yicha mutaxassisligi <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="specialization"
+                            name="specialization"
+                            value={formData.specialization}
+                            onChange={handleChange}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Misol: Oliy"
+                        />
+                    </div>
+                </div>
 
                 {formData.educations.map((education, index) => (
                     <div key={index} className="mt-4 space-y-4 border border-gray-200 p-4 rounded-lg relative">
@@ -1045,8 +975,40 @@ function MainForm() {
 
             {/* Mehnat faoliyati (Work Experience) section */}
             <div className="border-b border-gray-200 pb-6">
-                <h2 className="text-lg font-medium text-gray-900">Mehnat faoliyati</h2>
+                <h2 className="text-lg font-medium text-gray-900">Kasbiy malumotlar</h2>
 
+                <div className="mt-4 space-y-4 border border-gray-200 p-4 rounded-lg relative">
+                    <div className="mt-4">
+                        <label htmlFor="currentJobDate" className="block text-sm font-medium text-gray-700">
+                            Joriy lavozim sanasi <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="date"
+                            id="currentJobDate"
+                            name="currentJobDate"
+                            value={formData.currentJobDate}
+                            onChange={handleChange}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="mm/dd/yyyy"
+                        />
+                    </div>
+                    <div className="mt-4">
+                        <label htmlFor="currentJobFull" className="block text-sm font-medium text-gray-700">
+                            Joriy lavozim to'liq <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="currentJobFull"
+                            name="currentJobFull"
+                            value={formData.currentJobFull}
+                            onChange={handleChange}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Misol: O2 bo'limi Milliy universitet milliy guruhi"
+                        />
+                    </div>
+                </div>
+
+                <h2 className="text-lg font-medium text-gray-900">Mehnat faoliyati</h2>
                 {formData.workExperiences.map((exp, index) => (
                     <div key={index} className="mt-4 space-y-4 border border-gray-200 p-4 rounded-lg relative">
                         {index > 0 && (

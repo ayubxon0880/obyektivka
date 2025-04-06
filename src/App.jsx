@@ -1,6 +1,6 @@
-import MainForm from "./pages/MainForm.jsx";
 import {useEffect, useState} from "react";
 import canUpload from "./service/canUpload.jsx";
+import PersonalInfoForm from "./pages/PersonalInfoForm.jsx";
 
 function App() {
     const [error, setError] = useState(null);
@@ -22,13 +22,13 @@ function App() {
                     <h1 className="text-2xl font-bold">Obyektivka.uz</h1>
                     <p className="mt-2">Ushbu sayt orqali yangi va oson "obyektivka" yaratishingiz mumkin</p>
                 </div>
-                {
-                    error &&
-                    <div className="bg-red-600 text-white flex justify-center items-center p-6">
-                        <p className="mt-2">{error}</p>
-                    </div>
-                }
-                <MainForm/>
+                {/*{*/}
+                {/*    error &&*/}
+                {/*    <div className="bg-red-600 text-white flex justify-center items-center p-6">*/}
+                {/*        <p className="mt-2">{error}</p>*/}
+                {/*    </div>*/}
+                {/*}*/}
+                <PersonalInfoForm/>
             </div>
         </div>
     )

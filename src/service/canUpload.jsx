@@ -2,7 +2,7 @@ import axios from "axios";
 
 const canUpload = async () => {
     try {
-        const response = await axios.get('http://localhost:8080/api/v1/files/can-upload');
+        const response = await axios.get('https://qaxvachi.uz/api/v1/files/can-upload');
         return { success: true, data: response.data };
     } catch (error) {
         if (error.response) {
