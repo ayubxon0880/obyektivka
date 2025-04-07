@@ -39,6 +39,7 @@ export async function generatePDF(formData) {
     line("Tug'ilgan joyi:", formData.tugilganJoyi);
     line("Millati:", formData.millati);
     line("Ma'lumoti:", formData.malumoti);
+    line("Telefon:", formData.telefon ? formData.telefon : "yo'q");
 
     // Education
     y += 2;
@@ -117,14 +118,6 @@ export async function generatePDF(formData) {
     }
 
     // Deputy Status
-    if (formData.xalqDeputatimi) {
-        y += 2;
-        doc.setFont("Times", "bold");
-        doc.text("Xalq deputatligi:", 15, y); y += 6;
-        doc.setFont("Times", "normal");
-        doc.text(`• ${formData.xalqDeputatimi}`, 20, y);
-        y += 6;
-    }
 
     // Work Experience
     y += 6;
@@ -181,6 +174,7 @@ export async function generatePDF(formData) {
 
     let formDataForBackend = formData;
     formDataForBackend.photo = null;
+    formDataForBackend.chetTillari = formDataForBackend.chetTillari.map((t) => t.language + " : " + t.level);
     const result = await uploadFile(file, JSON.stringify(formDataForBackend));
 
     if (result.success) {
