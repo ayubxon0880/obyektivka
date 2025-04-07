@@ -434,6 +434,7 @@ const PersonalInfoForm = () => {
                                         onChange={handleInputChange}
                                     >
                                         <option value="Oliy">Oliy</option>
+                                        <option value="Tugallanmagan Oliy">Tugallanmagan Oliy</option>
                                         <option value="O'rta maxsus">O'rta maxsus</option>
                                         <option value="O'rta">O'rta</option>
                                     </select>
