@@ -13,14 +13,13 @@ const PersonalInfoForm = () => {
         tugilganJoyi: '',
         millati: '',
         malumoti: 'Oliy',
-        partiyaviyligi: '',
         tamomlagan: [''],
         mutaxassisligi: '',
         ilmiyDarajasi: [],
         ilmiyUnvoni: [],
         chetTillari: [],
         mukofotlari: [],
-        xalqDeputatimi: '',
+        telefon: '',
         mehnatFaoliyati: [],
         qarindoshlar: [
             {
@@ -35,74 +34,12 @@ const PersonalInfoForm = () => {
     });
     const [workExperiences, setWorkExperiences] = useState([]);
 
-
-    // const [formData, setFormData] = useState({
-    //     familya: 'Yuldashev',
-    //     ism: 'Shohruh',
-    //     sharif: 'Shodmonovich',
-    //     photo: null,
-    //     joriyLavozimSanasi: '2020 yil 15 sentabrdan',
-    //     joriyLavozimToLiq: 'Toshkent Axborot Texnologiyalari Universiteti dasturiy injiniring kafedrasi dotsenti',
-    //     tugilganSana: '1985-06-20',
-    //     tugilganJoyi: 'Toshkent shahri',
-    //     millati: 'o\'zbek',
-    //     malumoti: 'Oliy',
-    //     partiyaviyligi: 'O\'zbekiston Liberal Demokratik partiyasi a\'zosi',
-    //     tamomlagan: [
-    //         '2007 yil Toshkent Axborot Texnologiyalari Universiteti (bakalavr)',
-    //         '2009 yil Toshkent Axborot Texnologiyalari Universiteti (magistr)'
-    //     ],
-    //     mutaxassisligi: 'Dasturiy injiniring',
-    //     ilmiyDarajasi: ['Texnika fanlari nomzodi (PhD)'],
-    //     ilmiyUnvoni: ['Dotsent'],
-    //     chetTillari: ['Ingliz tili', 'Rus tili'],
-    //     mukofotlari: ['O\'zbekiston Respublikasi "Shuhrat" medali'],
-    //     xalqDeputatimi: 'Toshkent shahar Kengashi deputati',
-    //     mehnatFaoliyati: [],
-    //     qarindoshlar: [
-    //         {
-    //             qarindoshligi: 'Otasi',
-    //             fish: 'Yuldashev Shodmon Qosimovich',
-    //             tugilganYiliVaJoyi: '1955 yil, Toshkent shahri',
-    //             vafotEtgan: false,
-    //             ishJoyiVaLavozimi: 'Pensiyada (sobiq maktab direktori)',
-    //             turarJoyi: 'Toshkent shahri, Mirzo Ulug\'bek tumani, Navoiy ko\'chasi, 25-uy'
-    //         },
-    //         {
-    //             qarindoshligi: 'Onasi',
-    //             fish: 'Yuldasheva Dilfuza Xamidovna',
-    //             tugilganYiliVaJoyi: '1960 yil, Toshkent shahri',
-    //             vafotEtgan: false,
-    //             ishJoyiVaLavozimi: 'Pensiyada (sobiq shifokor)',
-    //             turarJoyi: 'Toshkent shahri, Mirzo Ulug\'bek tumani, Navoiy ko\'chasi, 25-uy'
-    //         }
-    //     ]
-    // });
-    //
-    // const [workExperiences, setWorkExperiences] = useState([
-    //     {
-    //         startYear: '2010',
-    //         endYear: '2015',
-    //         position: 'TATU dasturiy injiniring kafedrasi assistenti'
-    //     },
-    //     {
-    //         startYear: '2015',
-    //         endYear: '2020',
-    //         position: 'TATU dasturiy injiniring kafedrasi katta o\'qituvchisi'
-    //     },
-    //     {
-    //         startYear: '2020',
-    //         endYear: 'now',
-    //         position: 'TATU dasturiy injiniring kafedrasi dotsenti'
-    //     }
-    // ]);
-
     const [currentStep, setCurrentStep] = useState(1);
     const [errors, setErrors] = useState({});
 
     const validateStep = (step) => {
         const newErrors = {};
-
+        console.log(formData);
         if (step === 1) {
             if (!formData.familya) newErrors.familya = 'Familya kiritilishi shart';
             if (!formData.ism) newErrors.ism = 'Ism kiritilishi shart';
@@ -111,6 +48,7 @@ const PersonalInfoForm = () => {
             if (!formData.tugilganSana) newErrors.tugilganSana = 'Tug\'ilgan sana kiritilishi shart';
             if (!formData.tugilganJoyi) newErrors.tugilganJoyi = 'Tug\'ilgan joyi kiritilishi shart';
             if (!formData.millati) newErrors.millati = 'Millati kiritilishi shart';
+            if (!formData.telefon) newErrors.telefon = 'Telefon kiritilishi shart';
         }
 
         if (step === 2) {
@@ -504,21 +442,59 @@ const PersonalInfoForm = () => {
                             <div className="space-y-6">
                                 {/* Languages */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Biladigan chet
-                                        tillari</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Biladigan chet tillari</label>
                                     {formData.chetTillari.map((item, index) => (
                                         <div key={`chet-tillari-${index}`} className="mb-2 flex gap-2 items-center">
                                             <input
                                                 type="text"
                                                 className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
                                                 placeholder="Ingliz tili"
-                                                value={item}
-                                                onChange={(e) => handleFieldChange('chetTillari', index, e.target.value)}
+                                                value={item.language}
+                                                onChange={(e) => {
+                                                    const newChetTillari = [...formData.chetTillari];
+                                                    newChetTillari[index] = {
+                                                        ...newChetTillari[index],
+                                                        language: e.target.value
+                                                    };
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        chetTillari: newChetTillari
+                                                    }));
+                                                }}
                                             />
+                                            <select
+                                                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
+                                                value={item.level}
+                                                onChange={(e) => {
+                                                    const newChetTillari = [...formData.chetTillari];
+                                                    newChetTillari[index] = {
+                                                        ...newChetTillari[index],
+                                                        level: e.target.value
+                                                    };
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        chetTillari: newChetTillari
+                                                    }));
+                                                }}
+                                            >
+                                                <option value="">Darajani tanlang</option>
+                                                <option value="A1">A1 (Boshlang'ich)</option>
+                                                <option value="A2">A2 (Elementar)</option>
+                                                <option value="B1">B1 (O'rta)</option>
+                                                <option value="B2">B2 (O'rta yuqori)</option>
+                                                <option value="C1">C1 (Ilg'or)</option>
+                                                <option value="C2">C2 (Professional)</option>
+                                            </select>
                                             <button
                                                 type="button"
                                                 className="p-2 text-red-500 hover:text-red-700"
-                                                onClick={() => removeField('chetTillari', index)}
+                                                onClick={() => {
+                                                    const newChetTillari = formData.chetTillari.filter((_, i) => i !== index);
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        chetTillari: newChetTillari
+                                                    }));
+                                                }}
                                                 aria-label="Remove"
                                             >
                                                 ×
@@ -528,7 +504,12 @@ const PersonalInfoForm = () => {
                                     <button
                                         type="button"
                                         className="w-full py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-teal-700 bg-white hover:bg-teal-50"
-                                        onClick={() => addField('chetTillari')}
+                                        onClick={() => {
+                                            setFormData(prev => ({
+                                                ...prev,
+                                                chetTillari: [...prev.chetTillari, { language: '', level: '' }]
+                                            }));
+                                        }}
                                     >
                                         + Chet tili qo'shish
                                     </button>
@@ -630,30 +611,15 @@ const PersonalInfoForm = () => {
                                     </button>
                                 </div>
 
-                                {/* Party Membership */}
-                                <div>
-                                    <label
-                                        className="block text-sm font-medium text-gray-700 mb-1">Partiyaviyligi</label>
-                                    <input
-                                        type="text"
-                                        placeholder="O'zbekiston Xalq demokratik partiyasi a'zosi"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
-                                        name="partiyaviyligi"
-                                        value={formData.partiyaviyligi}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
-
-                                {/* Deputy Status */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Xalq deputatlari Kengashi a'zosimi?
+                                        Telefon raqam
                                     </label>
                                     <input
                                         type="text"
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
-                                        name="xalqDeputatimi"
-                                        value={formData.xalqDeputatimi}
+                                        name="telefon"
+                                        value={formData.telefon}
                                         onChange={handleInputChange}
                                     />
                                 </div>
@@ -680,12 +646,11 @@ const PersonalInfoForm = () => {
                             <div className="space-y-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Joriy lavozim sanasi <span className="text-red-500">*</span>
+                                        Joriy ish boshlangan sana <span className="text-red-500">*</span>
                                     </label>
                                     <input
-                                        type="text"
+                                        type="date"
                                         required
-                                        placeholder="2010 yil 06 sentabrdan"
                                         className={`w-full px-3 py-2 border ${errors.joriyLavozimSanasi ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-teal-500 focus:border-teal-500`}
                                         name="joriyLavozimSanasi"
                                         value={formData.joriyLavozimSanasi}
@@ -715,7 +680,7 @@ const PersonalInfoForm = () => {
                         </div>
 
                         <div className="bg-white p-6 rounded-lg shadow-md">
-                            <h3 className="text-lg font-semibold text-teal-800 mb-4">Mehnat faoliyati tarixi</h3>
+                            <h3 className="text-lg font-semibold text-teal-800 mb-4">Bugunga qadar ishlagan joylari</h3>
                             {errors.workExperiences &&
                                 <p className="text-sm text-red-600 mb-2">{errors.workExperiences}</p>}
                             {workExperiences.map((exp, index) => (

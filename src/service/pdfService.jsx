@@ -96,7 +96,7 @@ export async function generatePDF(formData) {
         doc.setFont("Times", "normal");
         formData.chetTillari.forEach((lang) => {
             if (lang) {
-                doc.text(`• ${lang}`, 20, y);
+                doc.text(`• ${lang.language} - ${lang.level}`, 20, y);
                 y += 6;
             }
         });
@@ -114,16 +114,6 @@ export async function generatePDF(formData) {
                 y += 6;
             }
         });
-    }
-
-    // Party Membership
-    if (formData.partiyaviyligi) {
-        y += 2;
-        doc.setFont("Times", "bold");
-        doc.text("Partiyaviyligi:", 15, y); y += 6;
-        doc.setFont("Times", "normal");
-        doc.text(`• ${formData.partiyaviyligi}`, 20, y);
-        y += 6;
     }
 
     // Deputy Status
