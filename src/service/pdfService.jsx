@@ -133,14 +133,12 @@ export async function generatePDF(formData, workExperiences) {
         // didDrawPage: () => { y = doc.lastAutoTable.finalY + 10; }
     });
 
-    // Second Page Content
     if (currentPage < maxPages) {
         doc.addPage();
         currentPage++;
         y = 30;
     }
 
-    // Additional Sections
     const additionalSections = [
         { title: "Kuchli tomonlari:", content: formData.kuchliTaraflari },
         { title: "Kuchsiz tomonlari:", content: formData.kuchsizTaraflari },
@@ -166,7 +164,6 @@ export async function generatePDF(formData, workExperiences) {
         });
     });
 
-    // Save and upload PDF
     const pdfBlob = doc.output('blob');
     const file = new File([pdfBlob], "obyektivka.pdf", { type: "application/pdf" });
 
