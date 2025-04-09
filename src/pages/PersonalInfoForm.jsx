@@ -72,7 +72,6 @@ const PersonalInfoForm = () => {
         qoshimchaMalumot: 'Open source loyihalarda ishtirok etishni yoqtiraman'
     });
 
-
     const [workExperiences, setWorkExperiences] = useState([
         {
             startYear: '2015',
@@ -90,7 +89,6 @@ const PersonalInfoForm = () => {
             position: 'Dasturiy injiniring mutaxassisi (Najot Ta\'lim)'
         }
     ]);
-
 
     const [currentStep, setCurrentStep] = useState(1);
     const [errors, setErrors] = useState({});
