@@ -3,36 +3,94 @@ import {generatePDF} from "../service/pdfService.jsx";
 
 const PersonalInfoForm = () => {
     const [formData, setFormData] = useState({
-        familya: '',
-        ism: '',
-        sharif: '',
+        familya: 'Abdullayev',
+        ism: 'Botir',
+        sharif: 'Bahodirovich',
         photo: null,
-        joriyLavozimSanasi: '',
-        joriyLavozimToLiq: '',
-        tugilganSana: '',
-        tugilganJoyi: '',
-        millati: '',
+        joriyLavozimSanasi: '2020-05-15',
+        joriyLavozimToLiq: 'Dasturiy injiniring mutaxassisi',
+        tugilganSana: '1990-01-01',
+        tugilganJoyi: 'Toshkent shahri',
+        hozirgiYashashJoyi: 'Toshkent shahri, Mirzo Ulug\'bek tumani',
+        millati: 'O\'zbek',
         malumoti: 'Oliy',
-        tamomlagan: [''],
-        mutaxassisligi: '',
-        ilmiyDarajasi: [],
-        ilmiyUnvoni: [],
-        chetTillari: [],
-        mukofotlari: [],
-        telefon: '',
+        tamomlagan: [{
+            institution: 'Toshkent Davlat Texnika Universiteti',
+            startDate: '2008-09-01',
+            endDate: '2012-06-30',
+            specialization: 'Dasturiy injiniring'
+        }],
+        mutaxassisligi: 'Dasturiy injiniring',
+        ilmiyDarajasi: ['Texnika fanlari nomzodi'],
+        ilmiyUnvoni: ['Katta o\'qituvchi'],
+        chetTillari: [
+            { language: 'Ingliz tili', level: 'B2' },
+            { language: 'Rus tili', level: 'C1' }
+        ],
+        mukofotlari: ['Yilning eng yaxshi o\'qituvchisi'],
+        telefon: '998901234567',
         mehnatFaoliyati: [],
         qarindoshlar: [
             {
                 qarindoshligi: 'Otasi',
-                fish: '',
-                tugilganYiliVaJoyi: '',
+                fish: 'Abdullayev Bahodir Salimovich',
+                tugilganYiliVaJoyi: '1965 yil, Toshkent shahri',
                 vafotEtgan: false,
-                ishJoyiVaLavozimi: '',
-                turarJoyi: ''
+                ishJoyiVaLavozimi: 'Pensiyada (avval TDTU professori)',
+                turarJoyi: 'Toshkent shahri, Mirzo Ulug\'bek tumani'
+            },
+            {
+                qarindoshligi: 'Onasi',
+                fish: 'Abdullayeva Dilfuza Ravshanovna',
+                tugilganYiliVaJoyi: '1968 yil, Samarqand shahri',
+                vafotEtgan: false,
+                ishJoyiVaLavozimi: 'Shifokor',
+                turarJoyi: 'Toshkent shahri, Mirzo Ulug\'bek tumani'
             }
-        ]
+        ],
+        // Step 4 uchun yangi maydonlar
+        kuchliTaraflari: [
+            'Jamoada ishlash qobiliyati',
+            'Muammolarni hal qilish',
+            'Kommunikatsiya qobiliyati'
+        ],
+        kuchsizTaraflari: [
+            'Mukammallikka intilish',
+            'Ko\'p vazifalarni bir vaqtda bajarish'
+        ],
+        professionalQobiliyatlari: [
+            'JavaScript, React, Node.js',
+            'Dasturiy ta\'minotni loyihalash',
+            'Ma\'lumotlar bazalari'
+        ],
+        shaxsiyFazilatlari: [
+            'Sabr-toqat',
+            'Ijodkorlik',
+            'Mas\'uliyatlilik'
+        ],
+        qiziqishlari: 'Kitob o\'qish, musiqaga qiziqish, futbol',
+        qoshimchaMalumot: 'Open source loyihalarda ishtirok etishni yoqtiraman'
     });
-    const [workExperiences, setWorkExperiences] = useState([]);
+
+
+    const [workExperiences, setWorkExperiences] = useState([
+        {
+            startYear: '2015',
+            endYear: '2018',
+            position: 'Dasturchi (EPAM Systems)'
+        },
+        {
+            startYear: '2018',
+            endYear: '2020',
+            position: 'Katta dasturchi (Google)'
+        },
+        {
+            startYear: '2020',
+            endYear: 'now',
+            position: 'Dasturiy injiniring mutaxassisi (Najot Ta\'lim)'
+        }
+    ]);
+
 
     const [currentStep, setCurrentStep] = useState(1);
     const [errors, setErrors] = useState({});
@@ -63,6 +121,9 @@ const PersonalInfoForm = () => {
 
     const handleInputChange = (e) => {
         const {name, value} = e.target;
+        if (name === "telefon" && !value.startsWith("998")) {
+            return;
+        }
         setFormData(prev => ({
             ...prev,
             [name]: value
@@ -76,9 +137,9 @@ const PersonalInfoForm = () => {
         }));
     };
 
-    const handleTamomlaganChange = (index, value) => {
+    const handleTamomlaganChange = (index, field, value) => {
         const newTamomlagan = [...formData.tamomlagan];
-        newTamomlagan[index] = value;
+        newTamomlagan[index][field] = value;
         setFormData(prev => ({
             ...prev,
             tamomlagan: newTamomlagan
@@ -88,7 +149,12 @@ const PersonalInfoForm = () => {
     const addTamomlaganField = () => {
         setFormData(prev => ({
             ...prev,
-            tamomlagan: [...prev.tamomlagan, '']
+            tamomlagan: [...prev.tamomlagan, {
+                institution: '',
+                startDate: '',
+                endDate: '',
+                specialization: ''
+            }]
         }));
     };
 
@@ -191,17 +257,17 @@ const PersonalInfoForm = () => {
         setWorkExperiences(newExperiences);
     };
 
-    const [loading, setLoding] = useState(false);
+    const [loading, setLoading] = useState(false);
     const handleSubmit = (e) => {
-        setLoding(true);
+        setLoading(true);
         e.preventDefault();
         const finalData = {
             ...formData,
             mehnatFaoliyati: workExperiences
         };
-        generatePDF(finalData).then((res) => {
+        generatePDF(finalData,workExperiences).then((res) => {
             console.log(res);
-            setLoding(false);
+            setLoading(false);
         });
     };
 
@@ -217,12 +283,13 @@ const PersonalInfoForm = () => {
         window.scrollTo(0, 0);
     };
 
+
     return (
         <div className="max-w-4xl mx-auto p-4">
             {/* Progress indicator */}
             <div className="flex items-center justify-between mb-8 relative">
                 <div className="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 -z-10"></div>
-                {[1, 2, 3].map((step) => (
+                {[1, 2, 3, 4].map((step) => (
                     <div key={step} className="flex flex-col items-center">
                         <div
                             className={`w-10 h-10 rounded-full flex items-center justify-center ${currentStep >= step ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-600'} font-medium`}>
@@ -233,6 +300,7 @@ const PersonalInfoForm = () => {
                             {step === 1 && 'Shaxsiy ma\'lumotlar'}
                             {step === 2 && 'Ish faoliyati'}
                             {step === 3 && 'Oilaviy ma\'lumotlar'}
+                            {step === 4 && 'Shaxsiy fazilatlar'}
                         </span>
                     </div>
                 ))}
@@ -291,6 +359,18 @@ const PersonalInfoForm = () => {
                                     />
                                     {errors.sharif && <p className="mt-1 text-sm text-red-600">{errors.sharif}</p>}
                                 </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Telefon raqam <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="number"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
+                                        name="telefon"
+                                        value={formData.telefon}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
                             </div>
 
                             <div className="mt-4">
@@ -347,6 +427,22 @@ const PersonalInfoForm = () => {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Ayni vaqtda yashash joyi <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="Qashqadaryo viloyati, Nishon tumani"
+                                        className={`w-full px-3 py-2 border ${errors.hozirgiYashashJoyi ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-teal-500 focus:border-teal-500`}
+                                        name="hozirgiYashashJoyi"
+                                        value={formData.hozirgiYashashJoyi}
+                                        onChange={handleInputChange}
+                                    />
+                                    {errors.hozirgiYashashJoyi &&
+                                        <p className="mt-1 text-sm text-red-600">{errors.hozirgiYashashJoyi}</p>}
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
                                         Millati <span className="text-red-500">*</span>
                                     </label>
                                     <input
@@ -385,32 +481,83 @@ const PersonalInfoForm = () => {
                             <h3 className="text-lg font-semibold text-teal-800 mb-4">Ta'lim haqida ma'lumot</h3>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Tamomlagan o'quv
-                                        muassasalari</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Tamomlagan o'quv muassasalari
+                                    </label>
                                     {formData.tamomlagan.map((item, index) => (
-                                        <div key={index} className="mb-2 flex gap-2 items-center">
-                                            <div className="flex-1">
-                                                <input
-                                                    type="text"
-                                                    required
-                                                    placeholder="1997 yil Toshkent davlat universiteti (bakalavri)"
-                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
-                                                    value={item}
-                                                    onChange={(e) => handleTamomlaganChange(index, e.target.value)}
-                                                />
+                                        <div key={index} className="mb-4 p-4 border border-gray-200 rounded-md">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                        O‘qish nomi <span className="text-red-500">*</span>
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        required
+                                                        placeholder="Toshkent Davlat Universiteti"
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
+                                                        value={item.institution}
+                                                        onChange={(e) => handleTamomlaganChange(index, 'institution', e.target.value)}
+                                                    />
+                                                </div>
+
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Yo'nalish <span className="text-red-500">*</span>
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        required
+                                                        placeholder="Dasturiy injiniring"
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
+                                                        value={item.specialization}
+                                                        onChange={(e) => handleTamomlaganChange(index, 'specialization', e.target.value)}
+                                                    />
+                                                </div>
                                             </div>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Boshlanish sanasi <span className="text-red-500">*</span>
+                                                    </label>
+                                                    <input
+                                                        type="date"
+                                                        required
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
+                                                        value={item.startDate}
+                                                        onChange={(e) => handleTamomlaganChange(index, 'startDate', e.target.value)}
+                                                    />
+                                                </div>
+
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Tugash sanasi <span className="text-red-500">*</span>
+                                                    </label>
+                                                    <input
+                                                        type="date"
+                                                        required
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
+                                                        value={item.endDate}
+                                                        onChange={(e) => handleTamomlaganChange(index, 'endDate', e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+
                                             {formData.tamomlagan.length > 1 && (
-                                                <button
-                                                    type="button"
-                                                    className="p-2 text-red-500 hover:text-red-700"
-                                                    onClick={() => removeTamomlaganField(index)}
-                                                    aria-label="Remove"
-                                                >
-                                                    ×
-                                                </button>
+                                                <div className="mt-2 flex justify-end">
+                                                    <button
+                                                        type="button"
+                                                        className="text-red-500 text-sm hover:text-red-700"
+                                                        onClick={() => removeTamomlaganField(index)}
+                                                    >
+                                                        O'chirish
+                                                    </button>
+                                                </div>
                                             )}
                                         </div>
                                     ))}
+
                                     <button
                                         type="button"
                                         className="mt-2 w-full py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-teal-700 bg-white hover:bg-teal-50"
@@ -420,22 +567,9 @@ const PersonalInfoForm = () => {
                                     </button>
                                 </div>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Mutaxassisligi
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="Dasturiy injiniring"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
-                                        name="mutaxassisligi"
-                                        value={formData.mutaxassisligi}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
+                                {/* ... rest of the education section */}
                             </div>
                         </div>
-
                         {/* Additional Information Section */}
                         <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-lg font-semibold text-teal-800 mb-4">Qo'shimcha ma'lumotlar</h3>
@@ -609,19 +743,6 @@ const PersonalInfoForm = () => {
                                     >
                                         + Mukofot qo'shish
                                     </button>
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Telefon raqam
-                                    </label>
-                                    <input
-                                        type="text"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
-                                        name="telefon"
-                                        value={formData.telefon}
-                                        onChange={handleInputChange}
-                                    />
                                 </div>
                             </div>
                         </div>
@@ -900,17 +1021,205 @@ const PersonalInfoForm = () => {
                             >
                                 ← Orqaga
                             </button>
+                            <button
+                                type="button"
+                                onClick={nextStep}
+                                className="px-6 py-2 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-md shadow"
+                            >
+                                Keyingisi →
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {currentStep === 4 && (
+                    <div className="space-y-6">
+                        <div className="bg-white p-6 rounded-lg shadow-md">
+                            <h3 className="text-lg font-semibold text-teal-800 mb-4">Shaxsiy fazilatlar va qobiliyatlar</h3>
+
+                            {/* Strengths */}
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Kuchli tomonlari
+                                </label>
+                                {formData.kuchliTaraflari.map((item, index) => (
+                                    <div key={`strength-${index}`} className="mb-2 flex gap-2 items-center">
+                                        <input
+                                            type="text"
+                                            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
+                                            placeholder="Masalan: Jamoada ishlash qobiliyati"
+                                            value={item}
+                                            onChange={(e) => handleFieldChange('kuchliTaraflari', index, e.target.value)}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="p-2 text-red-500 hover:text-red-700"
+                                            onClick={() => removeField('kuchliTaraflari', index)}
+                                            aria-label="Remove"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                ))}
+                                <button
+                                    type="button"
+                                    className="w-full py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-teal-700 bg-white hover:bg-teal-50"
+                                    onClick={() => addField('kuchliTaraflari')}
+                                >
+                                    + Kuchli tomon qo'shish
+                                </button>
+                            </div>
+
+                            {/* Weaknesses */}
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Kuchsiz tomonlari
+                                </label>
+                                {formData.kuchsizTaraflari.map((item, index) => (
+                                    <div key={`weakness-${index}`} className="mb-2 flex gap-2 items-center">
+                                        <input
+                                            type="text"
+                                            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
+                                            placeholder="Masalan: Mukammallikka intilish"
+                                            value={item}
+                                            onChange={(e) => handleFieldChange('kuchsizTaraflari', index, e.target.value)}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="p-2 text-red-500 hover:text-red-700"
+                                            onClick={() => removeField('kuchsizTaraflari', index)}
+                                            aria-label="Remove"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                ))}
+                                <button
+                                    type="button"
+                                    className="w-full py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-teal-700 bg-white hover:bg-teal-50"
+                                    onClick={() => addField('kuchsizTaraflari')}
+                                >
+                                    + Kuchsiz tomon qo'shish
+                                </button>
+                            </div>
+
+                            {/* Professional Skills */}
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Professional qobiliyatlari
+                                </label>
+                                {formData.professionalQobiliyatlari.map((item, index) => (
+                                    <div key={`skill-${index}`} className="mb-2 flex gap-2 items-center">
+                                        <input
+                                            type="text"
+                                            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
+                                            placeholder="Masalan: Dasturlash (JavaScript, Python)"
+                                            value={item}
+                                            onChange={(e) => handleFieldChange('professionalQobiliyatlari', index, e.target.value)}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="p-2 text-red-500 hover:text-red-700"
+                                            onClick={() => removeField('professionalQobiliyatlari', index)}
+                                            aria-label="Remove"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                ))}
+                                <button
+                                    type="button"
+                                    className="w-full py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-teal-700 bg-white hover:bg-teal-50"
+                                    onClick={() => addField('professionalQobiliyatlari')}
+                                >
+                                    + Qobiliyat qo'shish
+                                </button>
+                            </div>
+
+                            {/* Personal Qualities */}
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Shaxsiy fazilatlari
+                                </label>
+                                {formData.shaxsiyFazilatlari.map((item, index) => (
+                                    <div key={`quality-${index}`} className="mb-2 flex gap-2 items-center">
+                                        <input
+                                            type="text"
+                                            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
+                                            placeholder="Masalan: Sabr-toqat, ijodkorlik"
+                                            value={item}
+                                            onChange={(e) => handleFieldChange('shaxsiyFazilatlari', index, e.target.value)}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="p-2 text-red-500 hover:text-red-700"
+                                            onClick={() => removeField('shaxsiyFazilatlari', index)}
+                                            aria-label="Remove"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                ))}
+                                <button
+                                    type="button"
+                                    className="w-full py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-teal-700 bg-white hover:bg-teal-50"
+                                    onClick={() => addField('shaxsiyFazilatlari')}
+                                >
+                                    + Fazilat qo'shish
+                                </button>
+                            </div>
+
+                            {/* Interests */}
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Qiziqishlari
+                                </label>
+                                <textarea
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
+                                    rows="3"
+                                    placeholder="Masalan: Kitob o'qish, musiqaga qiziqish, sport"
+                                    value={formData.qiziqishlari}
+                                    onChange={(e) => handleInputChange({ target: { name: 'qiziqishlari', value: e.target.value } })}
+                                />
+                            </div>
+
+                            {/* Additional Info */}
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Qo'shimcha ma'lumotlar
+                                </label>
+                                <textarea
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
+                                    rows="3"
+                                    placeholder="Siz haqingizda qo'shimcha ma'lumotlar"
+                                    value={formData.qoshimchaMalumot}
+                                    onChange={(e) => handleInputChange({ target: { name: 'qoshimchaMalumot', value: e.target.value } })}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex justify-between">
+                            <button
+                                type="button"
+                                onClick={prevStep}
+                                className="px-6 py-2 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50"
+                            >
+                                ← Orqaga
+                            </button>
                             {
-                                loading ? <div
+                                loading ? (
+                                    <div
                                         className={`animate-spin rounded-full h-10 w-10 border-4 border-gray-200 border-t-teal-600`}>
                                         <span className="sr-only">Loading...</span>
-                                    </div> :
+                                    </div>
+                                ) : (
                                     <button
                                         type="submit"
                                         className="px-6 py-2 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-md shadow"
                                     >
                                         Ma'lumotlarni yuborish
                                     </button>
+                                )
                             }
                         </div>
                     </div>
