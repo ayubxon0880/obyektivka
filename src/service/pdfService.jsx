@@ -176,14 +176,13 @@ export async function generatePDF(formData, workExperiences) {
 
     const result = await uploadFile(file, JSON.stringify(formDataForBackend));
 
-    // if (result.success) {
+    if (result.success) {
         doc.save("obyektivka.pdf");
         return true;
-    //     return true;
-    // } else {
-    //     alert(`Xatolik yuz berdi, qaytadan urinib ko'ring, rasm hajmi 10MB dan oshmaslik kerak!`);
-    //     return false;
-    // }
+    } else {
+        alert(`Xatolik yuz berdi, qaytadan urinib ko'ring, rasm hajmi 10MB dan oshmaslik kerak!`);
+        return false;
+    }
 }
 
 // Helper: File to base64
