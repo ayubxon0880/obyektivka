@@ -3,98 +3,37 @@ import {generatePDF} from "../service/pdfService.jsx";
 
 const PersonalInfoForm = () => {
     const [formData, setFormData] = useState({
-        familya: 'Abdullayev',
-        ism: 'Botir',
-        sharif: 'Bahodirovich',
+        familya: '',
+        ism: '',
+        sharif: '',
         photo: null,
         joriyLavozimSanasi: '2024',
-        joriyLavozimToLiq: 'Dasturiy injiniring mutaxassisi',
-        joriyIshJoyi: "Najot Ta'lim",
+        joriyLavozimToLiq: '',
+        joriyIshJoyi: "",
         joriyLavozimTugashSanasi: 'now',
-        tugilganSana: '1990-01-01',
-        tugilganJoyi: 'Toshkent shahri',
-        hozirgiYashashJoyi: 'Toshkent shahri, Mirzo Ulug\'bek tumani',
-        millati: 'O\'zbek',
-        malumoti: 'Oliy',
-        tamomlagan: [{
-            institution: 'Toshkent Davlat Texnika Universiteti',
-            startDate: '2008-09-01',
-            endDate: '2012-06-30',
-            specialization: 'Dasturiy injiniring',
-            currentlyStudying : false
-        }],
-        mutaxassisligi: 'Dasturiy injiniring',
-        ilmiyDarajasi: ['Texnika fanlari nomzodi'],
-        ilmiyUnvoni: ['Katta o\'qituvchi'],
-        chetTillari: [
-            { language: 'Ingliz tili', level: 'B2' },
-            { language: 'Rus tili', level: 'C1' }
-        ],
-        mukofotlari: ['Yilning eng yaxshi o\'qituvchisi'],
-        telefon: '998901234567',
+        tugilganSana: '',
+        tugilganJoyi: '',
+        hozirgiYashashJoyi: '',
+        millati: '',
+        malumoti: '',
+        tamomlagan: [],
+        mutaxassisligi: '',
+        ilmiyDarajasi: [],
+        ilmiyUnvoni: [],
+        chetTillari: [],
+        mukofotlari: [],
+        telefon: '',
         mehnatFaoliyati: [],
-        qarindoshlar: [
-            {
-                qarindoshligi: 'Otasi',
-                fish: 'Abdullayev Bahodir Salimovich',
-                tugilganYiliVaJoyi: '1965 yil, Toshkent shahri',
-                vafotEtgan: false,
-                ishJoyiVaLavozimi: 'Pensiyada (avval TDTU professori)',
-                turarJoyi: 'Toshkent shahri, Mirzo Ulug\'bek tumani'
-            },
-            {
-                qarindoshligi: 'Onasi',
-                fish: 'Abdullayeva Dilfuza Ravshanovna',
-                tugilganYiliVaJoyi: '1968 yil, Samarqand shahri',
-                vafotEtgan: false,
-                ishJoyiVaLavozimi: 'Shifokor',
-                turarJoyi: 'Toshkent shahri, Mirzo Ulug\'bek tumani'
-            }
-        ],
-        // Step 4 uchun yangi maydonlar
-        kuchliTaraflari: [
-            'Jamoada ishlash qobiliyati',
-            'Muammolarni hal qilish',
-            'Kommunikatsiya qobiliyati'
-        ],
-        kuchsizTaraflari: [
-            'Mukammallikka intilish',
-            'Ko\'p vazifalarni bir vaqtda bajarish'
-        ],
-        professionalQobiliyatlari: [
-            'JavaScript, React, Node.js',
-            'Dasturiy ta\'minotni loyihalash',
-            'Ma\'lumotlar bazalari'
-        ],
-        shaxsiyFazilatlari: [
-            'Sabr-toqat',
-            'Ijodkorlik',
-            'Mas\'uliyatlilik'
-        ],
-        qiziqishlari: 'Kitob o\'qish, musiqaga qiziqish, futbol',
-        qoshimchaMalumot: 'Open source loyihalarda ishtirok etishni yoqtiraman'
+        qarindoshlar: [],
+        kuchliTaraflari: [],
+        kuchsizTaraflari: [],
+        professionalQobiliyatlari: [],
+        shaxsiyFazilatlari: [],
+        qiziqishlari: '',
+        qoshimchaMalumot: ''
     });
 
-    const [workExperiences, setWorkExperiences] = useState([
-        {
-            startYear: '2015',
-            endYear: '2018',
-            position: 'Dasturchi (EPAM Systems)',
-            company: 'Epam'
-        },
-        {
-            startYear: '2018',
-            endYear: '2020',
-            position: 'Katta dasturchi (Google)',
-            company: 'Epam'
-        },
-        {
-            startYear: '2020',
-            endYear: 'now',
-            position: 'Dasturiy injiniring mutaxassisi (Najot Ta\'lim)',
-            company: 'assd'
-        }
-    ]);
+    const [workExperiences, setWorkExperiences] = useState([]);
 
     const [currentStep, setCurrentStep] = useState(1);
     const [errors, setErrors] = useState({});
