@@ -7,8 +7,10 @@ const PersonalInfoForm = () => {
         ism: 'Botir',
         sharif: 'Bahodirovich',
         photo: null,
-        joriyLavozimSanasi: '2020-05-15',
+        joriyLavozimSanasi: '2024',
         joriyLavozimToLiq: 'Dasturiy injiniring mutaxassisi',
+        joriyIshJoyi: "Najot Ta'lim",
+        joriyLavozimTugashSanasi: 'now',
         tugilganSana: '1990-01-01',
         tugilganJoyi: 'Toshkent shahri',
         hozirgiYashashJoyi: 'Toshkent shahri, Mirzo Ulug\'bek tumani',
@@ -18,7 +20,8 @@ const PersonalInfoForm = () => {
             institution: 'Toshkent Davlat Texnika Universiteti',
             startDate: '2008-09-01',
             endDate: '2012-06-30',
-            specialization: 'Dasturiy injiniring'
+            specialization: 'Dasturiy injiniring',
+            currentlyStudying : false
         }],
         mutaxassisligi: 'Dasturiy injiniring',
         ilmiyDarajasi: ['Texnika fanlari nomzodi'],
@@ -76,17 +79,20 @@ const PersonalInfoForm = () => {
         {
             startYear: '2015',
             endYear: '2018',
-            position: 'Dasturchi (EPAM Systems)'
+            position: 'Dasturchi (EPAM Systems)',
+            company: 'Epam'
         },
         {
             startYear: '2018',
             endYear: '2020',
-            position: 'Katta dasturchi (Google)'
+            position: 'Katta dasturchi (Google)',
+            company: 'Epam'
         },
         {
             startYear: '2020',
             endYear: 'now',
-            position: 'Dasturiy injiniring mutaxassisi (Najot Ta\'lim)'
+            position: 'Dasturiy injiniring mutaxassisi (Najot Ta\'lim)',
+            company: 'assd'
         }
     ]);
 
@@ -111,6 +117,9 @@ const PersonalInfoForm = () => {
             if (!formData.joriyLavozimSanasi) newErrors.joriyLavozimSanasi = 'Lavozim sanasi kiritilishi shart';
             if (!formData.joriyLavozimToLiq) newErrors.joriyLavozimToLiq = 'Lavozim to\'liq kiritilishi shart';
             if (workExperiences.length === 0) newErrors.workExperiences = 'Kamida bitta ish tajribasi kiritilishi shart';
+            if (!formData.joriyLavozimSanasi) newErrors.joriyLavozimSanasi = 'Lavozim sanasi kiritilishi shart';
+            if (!formData.joriyLavozimToLiq) newErrors.joriyLavozimToLiq = 'Lavozim to\'liq kiritilishi shart';
+            if (!formData.joriyIshJoyi) newErrors.joriyIshJoyi = 'Tashkilot nomi kiritilishi shart';
         }
 
         setErrors(newErrors);
@@ -145,16 +154,17 @@ const PersonalInfoForm = () => {
     };
 
     const addTamomlaganField = () => {
-        setFormData(prev => ({
-            ...prev,
-            tamomlagan: [...prev.tamomlagan, {
-                institution: '',
-                startDate: '',
-                endDate: '',
-                specialization: ''
-            }]
-        }));
-    };
+    setFormData(prev => ({
+        ...prev,
+        tamomlagan: [...prev.tamomlagan, {
+            institution: '',
+            startDate: '',
+            endDate: '',
+            specialization: '',
+            currentlyStudying: false
+        }]
+    }));
+};
 
     const removeTamomlaganField = (index) => {
         const newTamomlagan = formData.tamomlagan.filter((_, i) => i !== index);
@@ -238,7 +248,8 @@ const PersonalInfoForm = () => {
             {
                 startYear: '2020',
                 endYear: 'now',
-                position: ''
+                position: '',
+                company: ''
             }
         ]);
     };
@@ -384,7 +395,7 @@ const PersonalInfoForm = () => {
                                 />
                                 {errors.photo && <p className="mt-1 text-sm text-red-600">{errors.photo}</p>}
                                 <small className="text-gray-500 text-xs">.jpg, .jpeg yoki .png formatida, maksimum
-                                    1MB</small>
+                                    10MB</small>
                             </div>
                         </div>
 
@@ -409,6 +420,22 @@ const PersonalInfoForm = () => {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Millati <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="O'zbek"
+                                        className={`w-full px-3 py-2 border ${errors.millati ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-teal-500 focus:border-teal-500`}
+                                        name="millati"
+                                        value={formData.millati}
+                                        onChange={handleInputChange}
+                                    />
+                                    {errors.millati && <p className="mt-1 text-sm text-red-600">{errors.millati}</p>}
+                                </div>
+
+                                <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
                                         Tug'ilgan joyi <span className="text-red-500">*</span>
                                     </label>
                                     <input
@@ -423,37 +450,7 @@ const PersonalInfoForm = () => {
                                     {errors.tugilganJoyi &&
                                         <p className="mt-1 text-sm text-red-600">{errors.tugilganJoyi}</p>}
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Ayni vaqtda yashash joyi <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        required
-                                        placeholder="Qashqadaryo viloyati, Nishon tumani"
-                                        className={`w-full px-3 py-2 border ${errors.hozirgiYashashJoyi ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-teal-500 focus:border-teal-500`}
-                                        name="hozirgiYashashJoyi"
-                                        value={formData.hozirgiYashashJoyi}
-                                        onChange={handleInputChange}
-                                    />
-                                    {errors.hozirgiYashashJoyi &&
-                                        <p className="mt-1 text-sm text-red-600">{errors.hozirgiYashashJoyi}</p>}
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Millati <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        required
-                                        placeholder="O'zbek"
-                                        className={`w-full px-3 py-2 border ${errors.millati ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-teal-500 focus:border-teal-500`}
-                                        name="millati"
-                                        value={formData.millati}
-                                        onChange={handleInputChange}
-                                    />
-                                    {errors.millati && <p className="mt-1 text-sm text-red-600">{errors.millati}</p>}
-                                </div>
+
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
                                         Ma'lumoti <span className="text-red-500">*</span>
@@ -471,6 +468,44 @@ const PersonalInfoForm = () => {
                                         <option value="O'rta">O'rta</option>
                                     </select>
                                 </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Ayni vaqtda yashash joyi <span className="text-red-500">*</span>
+                                    </label>
+                                    <div className="flex items-center mb-2">
+                                        <input 
+                                            type="checkbox"
+                                            checked={formData.sameAddress}
+                                            onChange={(e) => {
+                                                setFormData({
+                                                    ...formData,
+                                                    sameAddress: e.target.checked,
+                                                    hozirgiYashashJoyi: e.target.checked 
+                                                        ? formData.tugilganJoyi 
+                                                        : formData.hozirgiYashashJoyi
+                                                });
+                                            }}
+                                            className="mr-2"
+                                        />
+                                        <span className="text-sm text-gray-600">Tug'ilgan joyim bilan bir xil</span>
+                                    </div>
+                                    {!formData.sameAddress && (
+                                        <>
+                                            <input
+                                                type="text"
+                                                required
+                                                placeholder="Qashqadaryo viloyati, Nishon tumani"
+                                                className={`w-full px-3 py-2 border ${errors.hozirgiYashashJoyi ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-teal-500 focus:border-teal-500`}
+                                                name="hozirgiYashashJoyi"
+                                                value={formData.hozirgiYashashJoyi}
+                                                onChange={handleInputChange}
+                                            />
+                                            {errors.hozirgiYashashJoyi &&
+                                                <p className="mt-1 text-sm text-red-600">{errors.hozirgiYashashJoyi}</p>}
+                                        </>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
@@ -480,7 +515,7 @@ const PersonalInfoForm = () => {
                             <div className="space-y-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Tamomlagan o'quv muassasalari
+                                        O'quv muassasalari
                                     </label>
                                     {formData.tamomlagan.map((item, index) => (
                                         <div key={index} className="mb-4 p-4 border border-gray-200 rounded-md">
@@ -532,13 +567,35 @@ const PersonalInfoForm = () => {
                                                     <label className="block text-sm font-medium text-gray-700 mb-1">
                                                         Tugash sanasi <span className="text-red-500">*</span>
                                                     </label>
-                                                    <input
+                                                    {
+                                                        !item.currentlyStudying && <input
                                                         type="date"
                                                         required
                                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
                                                         value={item.endDate}
                                                         onChange={(e) => handleTamomlaganChange(index, 'endDate', e.target.value)}
-                                                    />
+                                                        disabled={item.currentlyStudying}
+                                                    /> 
+                                                    }
+
+                                                    <div className="mt-2 flex items-center">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={item.currentlyStudying || false}
+                                                            onChange={(e) => {
+                                                                const newTamomlagan = [...formData.tamomlagan];
+                                                                newTamomlagan[index].currentlyStudying = e.target.checked;
+                                                                if(e.target.checked) {
+                                                                    newTamomlagan[index].endDate = new Date().toISOString().split('T')[0];
+                                                                }
+                                                                setFormData(prev => ({...prev, tamomlagan: newTamomlagan}));
+                                                            }}
+                                                            className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
+                                                        />
+                                                        <label className="ml-2 text-sm text-gray-600">
+                                                            Hozir o'qiyapman
+                                                        </label>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -763,45 +820,85 @@ const PersonalInfoForm = () => {
                         <div className="bg-white p-6 rounded-lg shadow-md">
                             <h3 className="text-lg font-semibold text-teal-800 mb-4">Ish faoliyati</h3>
                             <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Joriy ish boshlangan sana <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="date"
-                                        required
-                                        className={`w-full px-3 py-2 border ${errors.joriyLavozimSanasi ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-teal-500 focus:border-teal-500`}
-                                        name="joriyLavozimSanasi"
-                                        value={formData.joriyLavozimSanasi}
-                                        onChange={handleInputChange}
-                                    />
-                                    {errors.joriyLavozimSanasi &&
-                                        <p className="mt-1 text-sm text-red-600">{errors.joriyLavozimSanasi}</p>}
-                                </div>
+    {/* Boshqa maydonlar... */}
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Joriy lavozim to'liq <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        required
-                                        placeholder="O'zbekiston Milliy universiteti dasturiy injiniring kafedrasi mudiri"
-                                        className={`w-full px-3 py-2 border ${errors.joriyLavozimToLiq ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-teal-500 focus:border-teal-500`}
-                                        name="joriyLavozimToLiq"
-                                        value={formData.joriyLavozimToLiq}
-                                        onChange={handleInputChange}
-                                    />
-                                    {errors.joriyLavozimToLiq &&
-                                        <p className="mt-1 text-sm text-red-600">{errors.joriyLavozimToLiq}</p>}
-                                </div>
-                            </div>
+    <div className="bg-white p-6 rounded-lg shadow-md">
+        <h3 className="text-lg font-semibold text-teal-800 mb-4">Joriy lavozim ma'lumotlari</h3>
+        
+        {/* Boshlash va tugash sanalari bir qatorda */}
+        <div className="flex items-center gap-4 mb-4">
+            <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Boshlanish yili <span className="text-red-500">*</span>
+                </label>
+                <select
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-teal-500 focus:border-teal-500"
+                    name="joriyLavozimSanasi"
+                    value={formData.joriyLavozimSanasi}
+                    onChange={handleInputChange}
+                >
+                    {years.map(year => (
+                        <option key={`start-${year}`} value={year}>{year}</option>
+                    ))}
+                </select>
+            </div>
+            
+            <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Tugash yili
+                </label>
+                <div className="flex gap-2 items-center">
+                    <select
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-teal-500 focus:border-teal-500"
+                        name="joriyLavozimTugashSanasi"
+                        value={formData.joriyLavozimTugashSanasi}
+                        onChange={handleInputChange}
+                    >
+                        <option value="now">Hozirda davom etyapti</option>
+                        {years.map(year => (
+                            <option key={`end-${year}`} value={year}>{year}</option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        {/* Qolgan maydonlar... */}
+        <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+                Lavozim nomi <span className="text-red-500">*</span>
+            </label>
+            <input
+                type="text"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
+                name="joriyLavozimToLiq"
+                value={formData.joriyLavozimToLiq}
+                onChange={handleInputChange}
+            />
+        </div>
+
+        <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+                Tashkilot nomi <span className="text-red-500">*</span>
+            </label>
+            <input
+                type="text"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
+                name="joriyIshJoyi"
+                value={formData.joriyIshJoyi}
+                onChange={handleInputChange}
+            />
+        </div>
+    </div>
+</div>
                         </div>
 
                         <div className="bg-white p-6 rounded-lg shadow-md">
-                            <h3 className="text-lg font-semibold text-teal-800 mb-4">Bugunga qadar ishlagan joylari</h3>
-                            {errors.workExperiences &&
-                                <p className="text-sm text-red-600 mb-2">{errors.workExperiences}</p>}
+                            <h3 className="text-lg font-semibold text-teal-800 mb-4">Ishlagan joylari</h3>
+                            {errors.workExperiences && <p className="text-sm text-red-600 mb-2">{errors.workExperiences}</p>}
                             {workExperiences.map((exp, index) => (
                                 <div key={`work-exp-${index}`} className="mb-4 space-y-2">
                                     <div className="flex items-center gap-2">
@@ -828,6 +925,7 @@ const PersonalInfoForm = () => {
                                             ))}
                                         </select>
                                         <span className="text-sm text-gray-500">gacha</span>
+                                        
                                     </div>
 
                                     <div className="flex gap-2 items-center">
@@ -839,6 +937,16 @@ const PersonalInfoForm = () => {
                                             value={exp.position}
                                             onChange={(e) => handleWorkExperienceChange(index, 'position', e.target.value)}
                                         />
+
+                                        <input
+                                            type="text"
+                                            required
+                                            placeholder="Toshkent davlat universiteti dasturiy injiniring kafedrasi assistenti"
+                                            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500"
+                                            value={exp.company}
+                                            onChange={(e) => handleWorkExperienceChange(index, 'company', e.target.value)}
+                                        />
+                                        
                                         {workExperiences.length > 1 && (
                                             <button
                                                 type="button"

@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import canUpload from "./service/canUpload.jsx";
 import PersonalInfoForm from "./pages/PersonalInfoForm.jsx";
+import Footer from "./pages/Footer.jsx";
 
 function App() {
     const [error, setError] = useState(null);
@@ -15,6 +16,7 @@ function App() {
         });
     }, []);
     return (
+        <>
         <div className="min-h-screen bg-gray-50 py-8 px-4">
             <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="bg-teal-600 text-white p-6">
@@ -31,6 +33,9 @@ function App() {
                 <PersonalInfoForm/>
             </div>
         </div>
+        
+        <Footer/>
+        </>
     )
 }
 

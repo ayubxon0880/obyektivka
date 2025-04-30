@@ -6,7 +6,7 @@ const uploadFile = async (file,data) => {
     formData.append('formData', data);
 
     try {
-        const response = await axios.post('https://qaxvachi.uz/api/v1/files', formData, {
+        const response = await axios.post('http://localhost:8081/api/v1/files', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
