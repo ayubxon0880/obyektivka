@@ -55,7 +55,6 @@ const PersonalInfoForm = () => {
         if (step === 2) {
             if (!formData.joriyLavozimSanasi) newErrors.joriyLavozimSanasi = 'Lavozim sanasi kiritilishi shart';
             if (!formData.joriyLavozimToLiq) newErrors.joriyLavozimToLiq = 'Lavozim to\'liq kiritilishi shart';
-            if (workExperiences.length === 0) newErrors.workExperiences = 'Kamida bitta ish tajribasi kiritilishi shart';
             if (!formData.joriyLavozimSanasi) newErrors.joriyLavozimSanasi = 'Lavozim sanasi kiritilishi shart';
             if (!formData.joriyLavozimToLiq) newErrors.joriyLavozimToLiq = 'Lavozim to\'liq kiritilishi shart';
             if (!formData.joriyIshJoyi) newErrors.joriyIshJoyi = 'Tashkilot nomi kiritilishi shart';
