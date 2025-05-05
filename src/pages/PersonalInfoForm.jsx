@@ -22,7 +22,7 @@ const PersonalInfoForm = () => {
         ilmiyUnvoni: [],
         chetTillari: [],
         mukofotlari: [],
-        telefon: '',
+        telefon: '998',
         mehnatFaoliyati: [],
         qarindoshlar: [],
         kuchliTaraflari: [],

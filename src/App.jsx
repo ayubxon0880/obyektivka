@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import canUpload from "./service/canUpload.jsx";
 import PersonalInfoForm from "./pages/PersonalInfoForm.jsx";
 import Footer from "./pages/Footer.jsx";
+import CopyButton from "./pages/Button.jsx";
 
 function App() {
     const [error, setError] = useState(null);
@@ -20,9 +21,9 @@ function App() {
         <div className="min-h-screen bg-gray-50 py-8 px-4">
             <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="bg-teal-600 text-white p-6">
-                    <h1 className="text-2xl font-bold">Saytnomi.uz</h1>
+                    <h1 className="text-2xl font-bold">resume360.uz</h1>
                     <p className="mt-2">Ushbu sayt orqali yangi va oson resume yaratishingiz mumkin</p>
-                    <p className="mt-2">Malumotlar saqlanadi</p>
+                    <p>Loihani qo'llab quvatlash uchun <CopyButton/></p>
                 </div>
                 {
                     error &&
