@@ -267,7 +267,7 @@ export async function generatePDF(formData, workExperiences) {
     });
 
     const pdfBlob = doc.output('blob');
-    const file = new File([pdfBlob], "obyektivka.pdf", { type: "application/pdf" });
+    const file = new File([pdfBlob], "resume360.pdf", { type: "application/pdf" });
 
     let formDataForBackend = { ...formData };
     formDataForBackend.photo = null;
@@ -276,7 +276,7 @@ export async function generatePDF(formData, workExperiences) {
     const result = await uploadFile(file, JSON.stringify(formDataForBackend));
 
     if (result.success) {
-        doc.save("obyektivka.pdf");
+        doc.save("resume360.pdf");
         return true;
     } else {
         alert(`Xatolik yuz berdi, qaytadan urinib ko'ring, rasm hajmi 10MB dan oshmaslik kerak!`);
