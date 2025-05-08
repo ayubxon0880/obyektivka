@@ -1,8 +1,10 @@
 import {useEffect, useState} from "react";
 import canUpload from "./service/canUpload.jsx";
-import PersonalInfoForm from "./pages/PersonalInfoForm.jsx";
+import Navbar from "./component/Navbar.jsx";
+import { Route, Routes } from "react-router-dom";
+import Home from "./pages/Home.jsx";
+import ResumeForm from "./pages/ResumeForm.jsx";
 import Footer from "./pages/Footer.jsx";
-import CopyButton from "./pages/Button.jsx";
 
 function App() {
     const [error, setError] = useState(null);
@@ -16,28 +18,21 @@ function App() {
             setError(err);
         });
     }, []);
+
     return (
-        <>
-        <div className="min-h-screen bg-gray-50 py-8 px-4">
-            <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="bg-teal-600 text-white p-6">
-                    <h1 className="text-2xl font-bold">resume360.uz</h1>
-                    <p className="mt-2">Ushbu sayt orqali yangi va oson resume yaratishingiz mumkin</p>
-                    <p>Loihani qo'llab quvatlash uchun <CopyButton/></p>
-                </div>
-                {
-                    error &&
-                    <div className="bg-red-600 text-white flex justify-center items-center p-6">
-                        <p className="mt-2">{error}</p>
-                    </div>
-                }
-                <PersonalInfoForm/>
+        <div className="min-h-screen bg-gray-50">
+            <Navbar/>
+    
+            <div className="py-8 px-4">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/it" element={<ResumeForm />} />
+              </Routes>
             </div>
+
+            <Footer/>
         </div>
-        
-        <Footer/>
-        </>
-    )
+    );
 }
 
-export default App
+export default App;
