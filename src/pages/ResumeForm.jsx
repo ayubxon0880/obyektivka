@@ -469,7 +469,7 @@ function ResumeForm() {
 
         try {
             const response = await axios.post(
-                'http://localhost:8081/api/v1/resume/generate',
+                'https://qaxvachi.uz/api/v1/resume/generate',
                 { ...formData, summary: formData.summary.text },
                 {
                     responseType: 'blob',
