@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {API} from "../env.jsx";
 
 const uploadFile = async (file,data) => {
     const formData = new FormData();
@@ -6,7 +7,7 @@ const uploadFile = async (file,data) => {
     formData.append('formData', data);
 
     try {
-        const response = await axios.post('https://qaxvachi.uz/api/v1/files', formData, {
+        const response = await axios.post(`${API}/files`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },

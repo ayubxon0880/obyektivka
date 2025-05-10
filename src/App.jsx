@@ -21,12 +21,12 @@ function App() {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <Navbar/>
+            {/* <Navbar/> */}
     
             <div className="py-8 px-4">
               <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/it" element={<ResumeForm />} />
+                <Route path="/" element={<ResumeForm />} />
+                {/* <Route path="/it" element={<ResumeForm />} /> */}
               </Routes>
             </div>
 

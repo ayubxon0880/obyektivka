@@ -8,7 +8,6 @@ export async function generatePDF(formData, workExperiences) {
     const maxPages = 2;
     let y = 30;
 
-    // Function to check and add new page
     const checkPageBreak = (requiredSpace) => {
         if (y + requiredSpace > 280 && currentPage < maxPages) {
             doc.addPage();
@@ -19,7 +18,6 @@ export async function generatePDF(formData, workExperiences) {
         return false;
     };
 
-    // Add photo if exists (only on first page)
     if (formData.photo && currentPage === 1) {
         try {
             const imageData = await toBase64(formData.photo);
@@ -29,14 +27,12 @@ export async function generatePDF(formData, workExperiences) {
         }
     }
 
-    // Title (first page only)
     if (currentPage === 1) {
         doc.setFont("Times", "bold");
         doc.setFontSize(14);
         doc.text("MA'LUMOTNOMA", 105, 20, null, null, "center");
     }
 
-    // Personal Information - only include fields that have values
     const personalInfo = [
         formData.familya && formData.ism && formData.sharif && {
             label: "Familiyasi, ismi, sharifi:", 
@@ -78,7 +74,7 @@ export async function generatePDF(formData, workExperiences) {
             label: "Telefon:", 
             value: formData.telefon
         }
-    ].filter(Boolean); // Remove any undefined entries
+    ].filter(Boolean);
 
     doc.setFont("Times", "normal");
     doc.setFontSize(12);
@@ -90,7 +86,6 @@ export async function generatePDF(formData, workExperiences) {
         y += 8;
     });
 
-    // Education - only if there are education entries
     if (formData.tamomlagan?.length > 0) {
         checkPageBreak(15);
         doc.setFont("Times", "bold");
@@ -109,7 +104,6 @@ export async function generatePDF(formData, workExperiences) {
         });
     }
 
-    // Professional Information - only show sections that have content
     const professionalSections = [
         formData.mutaxassisligi && {
             title: "Mutaxassisligi:", 
@@ -158,8 +152,7 @@ export async function generatePDF(formData, workExperiences) {
         y += sectionSpacing;
     });
 
-    // Work Experience - only show if there are experiences
-    const hasWorkExperiences = (formData.joriyIshJoyi && formData.joriyLavozimToLiq) || 
+    const hasWorkExperiences = (formData.joriyIshJoyi && formData.joriyLavozimToLiq) ||
                               (workExperiences && workExperiences.length > 0);
     
     if (hasWorkExperiences) {
@@ -169,7 +162,6 @@ export async function generatePDF(formData, workExperiences) {
         y += 6;
         doc.setFont("Times", "normal");
 
-        // Add current position first if exists
         if (formData.joriyIshJoyi && formData.joriyLavozimToLiq) {
             const period = formData.joriyLavozimTugashSanasi === 'now' 
                 ? `${formData.joriyLavozimSanasi || ''} - Hozirgacha` 
@@ -179,7 +171,6 @@ export async function generatePDF(formData, workExperiences) {
             y += 6;
         }
 
-        // Add other work experiences
         if (workExperiences?.length > 0) {
             workExperiences.forEach(exp => {
                 if (exp.position) {
@@ -195,7 +186,6 @@ export async function generatePDF(formData, workExperiences) {
         }
     }
 
-    // Family Members Table - only if there are relatives
     if (formData.qarindoshlar?.length > 0) {
         checkPageBreak(40);
         const relatives = formData.qarindoshlar.map(rel => [
@@ -217,7 +207,6 @@ export async function generatePDF(formData, workExperiences) {
         });
     }
 
-    // Additional sections - only show sections that have content
     const additionalSections = [
         formData.kuchliTaraflari?.length > 0 && {
             title: "Kuchli tomonlari:", 
@@ -284,7 +273,6 @@ export async function generatePDF(formData, workExperiences) {
     }
 }
 
-// Helper: File to base64
 function toBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();

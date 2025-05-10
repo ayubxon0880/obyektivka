@@ -1,8 +1,9 @@
 import axios from "axios";
+import {API} from "../env.jsx";
 
 const canUpload = async () => {
     try {
-        const response = await axios.get('https://qaxvachi.uz/api/v1/files/can-upload');
+        const response = await axios.get(`${API}/files/can-upload`);
         return { success: true, data: response.data };
     } catch (error) {
         if (error.response) {
