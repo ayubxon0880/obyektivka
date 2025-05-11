@@ -5,6 +5,7 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import ResumeForm from "./pages/ResumeForm.jsx";
 import Footer from "./pages/Footer.jsx";
+import Portfolio from "./pages/Portfolio.jsx";
 
 function App() {
     const [error, setError] = useState(null);
@@ -25,8 +26,8 @@ function App() {
     
             <div className="py-8 px-4">
               <Routes>
-                <Route path="/" element={<ResumeForm />} />
-                {/* <Route path="/it" element={<ResumeForm />} /> */}
+                    {/*<Route path="/" element={<Portfolio />} />*/}
+                  <Route path="/" element={<ResumeForm />} />
               </Routes>
             </div>
 

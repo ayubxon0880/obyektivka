@@ -48,7 +48,6 @@ function Footer() {
                   </svg>
                   +998 90 362 34 45
                 </a>
-                <p>Malumotlar saqlanadi</p>
               </nav>
             </div>
           </div>

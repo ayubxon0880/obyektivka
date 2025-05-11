@@ -1,18 +1,14 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import CopyButton from '../component/Button';
 import axios from "axios";
 
-// Input validation patterns
 const VALIDATIONS = {
     email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-    phone: /^\+?[\d\s-]{10,}$/,
     url: /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?$/,
     date: /^([1-9]|0[1-9]|1[0-2])\/(19|20)\d{2}$|^Present$/,
     name: /^.{2,}$/,
-    text: /^.{2,}$/,
 };
 
-// Sanitize input to prevent XSS
 const sanitizeInput = (input) => {
     return input.replace(/[<>]/g, '');
 };
@@ -65,13 +61,44 @@ function ResumeForm() {
             level: ''
         }]
     });
-
     const [newSkill, setNewSkill] = useState('');
     const [newTech, setNewTech] = useState('');
     const [currentProjectIndex, setCurrentProjectIndex] = useState(0);
     const [errors, setErrors] = useState({});
+    const [showRestorePrompt, setShowRestorePrompt] = useState(false);
+    const [shouldSave, setShouldSave] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    // Fill form with default values
+    useEffect(() => {
+        const saved = localStorage.getItem("formData");
+        if (saved) {
+            setShowRestorePrompt(true);
+        } else {
+            setShouldSave(true);
+        }
+    }, []);
+
+
+    useEffect(() => {
+        if (shouldSave) {
+            localStorage.setItem("formData", JSON.stringify(formData));
+        }
+    }, [formData, shouldSave]);
+
+    const handleRestore = () => {
+        const saved = localStorage.getItem("formData");
+        if (saved) {
+            setFormData(JSON.parse(saved));
+        }
+        setShowRestorePrompt(false);
+        setShouldSave(true);
+    };
+
+    const handleDecline = () => {
+        setShowRestorePrompt(false);
+        setShouldSave(true);
+    };
+
     const fillDefaults = () => {
         setFormData({
             personalInformation: {
@@ -129,15 +156,14 @@ function ResumeForm() {
     const validateField = (field, value, section) => {
         if (section === 'personalInformation') {
             if (field === 'email' && !VALIDATIONS.email.test(value)) return 'Invalid email format';
-            if (field === 'phoneNumber' && !VALIDATIONS.phone.test(value)) return 'Invalid phone number';
             if ((field === 'linkedin' || field === 'github' || field === 'portfolio') && value && !VALIDATIONS.url.test(value)) return 'Invalid URL';
             if (field === 'fullName' && !VALIDATIONS.name.test(value)) return 'Name must be at least 2 characters';
-            if (field === 'location' && !VALIDATIONS.text.test(value)) return 'Location must be at least 2 characters';
+            if (field === 'location' && !VALIDATIONS.name.test(value)) return 'Location must be at least 2 characters';
         }
-        if (section === 'summary' && !VALIDATIONS.text.test(value)) return 'Summary must be at least 2 characters';
+        if (section === 'summary' && !VALIDATIONS.name.test(value)) return 'Summary must be at least 2 characters';
         if (['experiences', 'educations', 'projects', 'certifications', 'languages'].includes(section)) {
             if (['startDate', 'endDate', 'date'].includes(field) && value && !VALIDATIONS.date.test(value)) return 'Invalid date format (MM/YYYY or Present)';
-            if (['position', 'company', 'degree', 'field', 'university', 'name', 'description', 'issuer', 'language'].includes(field) && !VALIDATIONS.text.test(value)) return 'Must be at least 2 characters';
+            if (['position', 'company', 'degree', 'field', 'university', 'name', 'description', 'issuer', 'language'].includes(field) && !VALIDATIONS.name.test(value)) return 'Must be at least 2 characters';
             if (['link'].includes(field) && value && !VALIDATIONS.url.test(value)) return 'Invalid URL';
         }
         return '';
@@ -145,12 +171,12 @@ function ResumeForm() {
 
     const handleInputChange = (section, field, value, index = null) => {
         const sanitizedValue = sanitizeInput(value);
-        let newErrors = { ...errors };
+        let newErrors = {...errors};
 
         if (index !== null) {
             const updatedArray = [...formData[section]];
-            updatedArray[index] = { ...updatedArray[index], [field]: sanitizedValue };
-            setFormData({ ...formData, [section]: updatedArray });
+            updatedArray[index] = {...updatedArray[index], [field]: sanitizedValue};
+            setFormData({...formData, [section]: updatedArray});
             newErrors[`${section}.${index}.${field}`] = validateField(field, sanitizedValue, section);
         } else if (section.includes('.')) {
             const [parent, child] = section.split('.');
@@ -180,7 +206,7 @@ function ResumeForm() {
         const sanitizedValue = sanitizeInput(value);
         const updatedArray = [...formData[section]];
         updatedArray[index][field] = sanitizedValue;
-        setFormData({ ...formData, [section]: updatedArray });
+        setFormData({...formData, [section]: updatedArray});
 
         setErrors({
             ...errors,
@@ -194,7 +220,7 @@ function ResumeForm() {
         const updatedDescriptions = [...updatedExperience[expIndex].description];
         updatedDescriptions[descIndex] = sanitizedValue;
         updatedExperience[expIndex].description = updatedDescriptions;
-        setFormData({ ...formData, experiences: updatedExperience });
+        setFormData({...formData, experiences: updatedExperience});
 
         setErrors({
             ...errors,
@@ -210,16 +236,16 @@ function ResumeForm() {
                 skills: [...formData.skills, sanitizedSkill.trim()]
             });
             setNewSkill('');
-            setErrors({ ...errors, newSkill: '' });
+            setErrors({...errors, newSkill: ''});
         } else {
-            setErrors({ ...errors, newSkill: 'Skill already exists or is invalid' });
+            setErrors({...errors, newSkill: 'Skill already exists or is invalid'});
         }
     };
 
     const removeSkill = (index) => {
         const updatedSkills = [...formData.skills];
         updatedSkills.splice(index, 1);
-        setFormData({ ...formData, skills: updatedSkills });
+        setFormData({...formData, skills: updatedSkills});
     };
 
     const addTechToProject = () => {
@@ -231,11 +257,11 @@ function ResumeForm() {
                     ...updatedProjects[currentProjectIndex].technologies,
                     sanitizedTech.trim()
                 ];
-                setFormData({ ...formData, projects: updatedProjects });
+                setFormData({...formData, projects: updatedProjects});
                 setNewTech('');
-                setErrors({ ...errors, newTech: '' });
+                setErrors({...errors, newTech: ''});
             } else {
-                setErrors({ ...errors, newTech: 'Technology already added' });
+                setErrors({...errors, newTech: 'Technology already added'});
             }
         }
     };
@@ -245,7 +271,7 @@ function ResumeForm() {
         const updatedTechs = [...updatedProjects[projectIndex].technologies];
         updatedTechs.splice(techIndex, 1);
         updatedProjects[projectIndex].technologies = updatedTechs;
-        setFormData({ ...formData, projects: updatedProjects });
+        setFormData({...formData, projects: updatedProjects});
     };
 
     const addExperience = () => {
@@ -268,8 +294,8 @@ function ResumeForm() {
     const removeExperience = (index) => {
         const updatedExperience = [...formData.experiences];
         updatedExperience.splice(index, 1);
-        setFormData({ ...formData, experiences: updatedExperience });
-        const newErrors = { ...errors };
+        setFormData({...formData, experiences: updatedExperience});
+        const newErrors = {...errors};
         Object.keys(newErrors).forEach(key => {
             if (key.startsWith(`experiences.${index}.`)) delete newErrors[key];
         });
@@ -279,7 +305,7 @@ function ResumeForm() {
     const addDescription = (expIndex) => {
         const updatedExperience = [...formData.experiences];
         updatedExperience[expIndex].description.push('');
-        setFormData({ ...formData, experiences: updatedExperience });
+        setFormData({...formData, experiences: updatedExperience});
     };
 
     const removeDescription = (expIndex, descIndex) => {
@@ -287,7 +313,7 @@ function ResumeForm() {
         const updatedDescriptions = [...updatedExperience[expIndex].description];
         updatedDescriptions.splice(descIndex, 1);
         updatedExperience[expIndex].description = updatedDescriptions;
-        setFormData({ ...formData, experiences: updatedExperience });
+        setFormData({...formData, experiences: updatedExperience});
         setErrors({
             ...errors,
             [`experiences.${expIndex}.description.${descIndex}`]: undefined
@@ -314,8 +340,8 @@ function ResumeForm() {
     const removeEducation = (index) => {
         const updatedEducation = [...formData.educations];
         updatedEducation.splice(index, 1);
-        setFormData({ ...formData, educations: updatedEducation });
-        const newErrors = { ...errors };
+        setFormData({...formData, educations: updatedEducation});
+        const newErrors = {...errors};
         Object.keys(newErrors).forEach(key => {
             if (key.startsWith(`educations.${index}.`)) delete newErrors[key];
         });
@@ -341,11 +367,11 @@ function ResumeForm() {
     const removeProject = (index) => {
         const updatedProjects = [...formData.projects];
         updatedProjects.splice(index, 1);
-        setFormData({ ...formData, projects: updatedProjects });
+        setFormData({...formData, projects: updatedProjects});
         if (currentProjectIndex >= index) {
             setCurrentProjectIndex(Math.max(0, currentProjectIndex - 1));
         }
-        const newErrors = { ...errors };
+        const newErrors = {...errors};
         Object.keys(newErrors).forEach(key => {
             if (key.startsWith(`projects.${index}.`)) delete newErrors[key];
         });
@@ -370,8 +396,8 @@ function ResumeForm() {
     const removeCertification = (index) => {
         const updatedCertifications = [...formData.certifications];
         updatedCertifications.splice(index, 1);
-        setFormData({ ...formData, certifications: updatedCertifications });
-        const newErrors = { ...errors };
+        setFormData({...formData, certifications: updatedCertifications});
+        const newErrors = {...errors};
         Object.keys(newErrors).forEach(key => {
             if (key.startsWith(`certifications.${index}.`)) delete newErrors[key];
         });
@@ -394,8 +420,8 @@ function ResumeForm() {
     const removeLanguage = (index) => {
         const updatedLanguages = [...formData.languages];
         updatedLanguages.splice(index, 1);
-        setFormData({ ...formData, languages: updatedLanguages });
-        const newErrors = { ...errors };
+        setFormData({...formData, languages: updatedLanguages});
+        const newErrors = {...errors};
         Object.keys(newErrors).forEach(key => {
             if (key.startsWith(`languages.${index}.`)) delete newErrors[key];
         });
@@ -408,7 +434,7 @@ function ResumeForm() {
             const error = validateField(field, formData.personalInformation[field], 'personalInformation');
             if (error) newErrors[`personalInformation.${field}`] = error;
         });
-        if (!VALIDATIONS.text.test(formData.summary.text)) {
+        if (!VALIDATIONS.name.test(formData.summary.text)) {
             newErrors['summary.text'] = 'Summary must be at least 2 characters';
         }
         formData.experiences.forEach((exp, index) => {
@@ -417,7 +443,7 @@ function ResumeForm() {
                 if (error) newErrors[`experiences.${index}.${field}`] = error;
             });
             exp.description.forEach((desc, descIndex) => {
-                if (!VALIDATIONS.text.test(desc)) {
+                if (!VALIDATIONS.name.test(desc)) {
                     newErrors[`experiences.${index}.description.${descIndex}`] = 'Description must be at least 2 characters';
                 }
             });
@@ -457,10 +483,13 @@ function ResumeForm() {
         });
 
         setErrors(newErrors);
+        console.log(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
+
     const handleSubmit = async (e) => {
+        setLoading(true);
         e.preventDefault();
         if (!validateForm()) {
             alert('Please fix the validation errors before submitting');
@@ -470,7 +499,7 @@ function ResumeForm() {
         try {
             const response = await axios.post(
                 'https://qaxvachi.uz/api/v1/resume/generate',
-                { ...formData, summary: formData.summary.text },
+                {...formData, summary: formData.summary.text},
                 {
                     responseType: 'blob',
                     headers: {
@@ -490,15 +519,35 @@ function ResumeForm() {
         } catch (error) {
             console.error('Error generating resume:', error);
             alert('Error generating resume. Please check your input and try again.');
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
+
         <div className="container mx-auto px-4 py-8 max-w-4xl">
+            {showRestorePrompt && (
+                <div className="bg-yellow-100 p-3 rounded mb-4">
+                    <p>Oldingi malumotlaringizni tiklashni xoxlaysizmi ?</p>
+                    <button
+                        onClick={handleRestore}
+                        className="bg-green-500 text-white px-3 py-1 rounded mr-2"
+                    >
+                        Ha
+                    </button>
+                    <button
+                        onClick={handleDecline}
+                        className="bg-red-500 text-white px-3 py-1 rounded"
+                    >
+                        Yo'q
+                    </button>
+                </div>
+            )}
             <div className="bg-teal-600 text-white p-6 rounded-lg border border-gray-100 shadow-sm">
                 <h1 className="text-2xl font-bold">Resume360.uz</h1>
                 <p className="mt-2">Ushbu sayt orqali yangi va oson resume yaratishingiz mumkin</p>
-                <div>Loihani qo'llab quvatlash uchun <CopyButton /></div>
+                <div>Loihani qo'llab quvatlash uchun <CopyButton/></div>
             </div>
 
             <div className="mt-4 flex justify-end">
@@ -507,22 +556,24 @@ function ResumeForm() {
                     onClick={fillDefaults}
                     className="bg-gray-600 text-white px-6 py-2 rounded-md hover:bg-gray-700 transition-colors"
                 >
-                    Fill with Defaults
+                    Test uchun malumotlar
                 </button>
             </div>
+            <br/>
 
             <form onSubmit={handleSubmit} className="space-y-8">
                 <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
-                    <h2 className="text-xl font-semibold mb-4 text-gray-700 border-b pb-2 border-gray-100">Personal Information</h2>
+                    <h2 className="text-xl font-semibold mb-4 text-gray-700 border-b pb-2 border-gray-100">Personal
+                        Information</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {[
-                            { label: "Full Name", key: "fullName", type: "text", required: true },
-                            { label: "Phone Number", key: "phoneNumber", type: "tel", required: true },
-                            { label: "Email", key: "email", type: "email", required: true },
-                            { label: "Location (City, Country)", key: "location", type: "text", required: true },
-                            { label: "LinkedIn Profile", key: "linkedin", type: "text" },
-                            { label: "GitHub Profile", key: "github", type: "text" },
-                            { label: "Portfolio Website", key: "portfolio", type: "text", fullWidth: true },
+                            {label: "Full Name", key: "fullName", type: "text", required: true},
+                            {label: "Phone Number", key: "phoneNumber", type: "tel", required: true},
+                            {label: "Email", key: "email", type: "email", required: true},
+                            {label: "Location (City, Country)", key: "location", type: "text", required: true},
+                            {label: "LinkedIn Profile (url)", key: "linkedin", type: "text"},
+                            {label: "GitHub Profile (url)", key: "github", type: "text"},
+                            {label: "Portfolio Website (url)", key: "portfolio", type: "text", fullWidth: true},
                         ].map((field) => (
                             <div key={field.key} className={field.fullWidth ? "md:col-span-2" : ""}>
                                 <label className="block text-sm font-medium text-gray-600 mb-1">{field.label}</label>
@@ -542,8 +593,10 @@ function ResumeForm() {
                 </div>
 
                 <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
-                    <h2 className="text-xl font-semibold mb-4 text-gray-700 border-b pb-2 border-gray-100">Professional Summary</h2>
-                    <label className="block text-sm font-medium text-gray-600 mb-2">Briefly describe your professional background (3-4 sentences)</label>
+                    <h2 className="text-xl font-semibold mb-4 text-gray-700 border-b pb-2 border-gray-100">Professional
+                        Summary</h2>
+                    <label className="block text-sm font-medium text-gray-600 mb-2">Briefly describe your professional
+                        background (3-4 sentences)</label>
                     <textarea
                         className={`w-full px-3 py-2 border ${errors['summary.text'] ? 'border-red-500' : 'border-gray-200'} rounded-md focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-teal-600 min-h-[120px]`}
                         value={formData.summary.text}
@@ -559,7 +612,8 @@ function ResumeForm() {
                     <h2 className="text-xl font-semibold mb-4 text-gray-700 border-b pb-2 border-gray-100">Skills</h2>
                     <div className="flex flex-wrap gap-2 mb-4">
                         {formData.skills.map((skill, index) => (
-                            <div key={index} className="bg-gray-50 text-gray-700 px-3 py-1 rounded-full flex items-center border border-gray-200">
+                            <div key={index}
+                                 className="bg-gray-50 text-gray-700 px-3 py-1 rounded-full flex items-center border border-gray-200">
                                 {skill}
                                 <button
                                     type="button"
@@ -593,19 +647,21 @@ function ResumeForm() {
                 </div>
 
                 <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
-                    <h2 className="text-xl font-semibold mb-4 text-gray-700 border-b pb-2 border-gray-100">Work Experience</h2>
+                    <h2 className="text-xl font-semibold mb-4 text-gray-700 border-b pb-2 border-gray-100">Work
+                        Experience</h2>
                     {formData.experiences.map((exp, expIndex) => (
                         <div key={expIndex} className="mb-6 pb-4 border-b border-gray-100 last:border-b-0 last:pb-0">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 {[
-                                    { label: "Position", key: "position", required: true },
-                                    { label: "Company", key: "company", required: true },
-                                    { label: "Location", key: "location" },
+                                    {label: "Position", key: "position", required: true},
+                                    {label: "Company", key: "company", required: true},
+                                    {label: "Location", key: "location"},
                                     {
                                         custom: (
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div>
-                                                    <label className="block text-sm font-medium text-gray-600 mb-1">Start Date (MM/YYYY)</label>
+                                                    <label className="block text-sm font-medium text-gray-600 mb-1">Start
+                                                        Date (MM/YYYY)</label>
                                                     <input
                                                         type="text"
                                                         className={`w-full px-3 py-2 border ${errors[`experiences.${expIndex}.startDate`] ? 'border-red-500' : 'border-gray-200'} rounded-md focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-teal-600`}
@@ -619,7 +675,8 @@ function ResumeForm() {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <label className="block text-sm font-medium text-gray-600 mb-1">End Date (MM/YYYY)</label>
+                                                    <label className="block text-sm font-medium text-gray-600 mb-1">End
+                                                        Date (MM/YYYY)</label>
                                                     <input
                                                         type="text"
                                                         className={`w-full px-3 py-2 border ${errors[`experiences.${expIndex}.endDate`] ? 'border-red-500' : 'border-gray-200'} rounded-md focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-teal-600`}
@@ -637,7 +694,8 @@ function ResumeForm() {
                                     }
                                 ].map((field, i) => field.custom || (
                                     <div key={field.key}>
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">{field.label}</label>
+                                        <label
+                                            className="block text-sm font-medium text-gray-600 mb-1">{field.label}</label>
                                         <input
                                             type="text"
                                             className={`w-full px-3 py-2 border ${errors[`experiences.${expIndex}.${field.key}`] ? 'border-red-500' : 'border-gray-200'} rounded-md focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-teal-600`}
@@ -653,7 +711,8 @@ function ResumeForm() {
                             </div>
 
                             <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-600 mb-2">Responsibilities & Achievements</label>
+                                <label className="block text-sm font-medium text-gray-600 mb-2">Responsibilities &
+                                    Achievements</label>
                                 {exp.description.map((desc, descIndex) => (
                                     <div key={descIndex} className="flex mb-2">
                                         <input
@@ -712,15 +771,16 @@ function ResumeForm() {
                         <div key={eduIndex} className="mb-6 pb-4 border-b border-gray-100 last:border-b-0 last:pb-0">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 {[
-                                    { label: "Degree", key: "degree", required: true },
-                                    { label: "Field of Study", key: "field", required: true },
-                                    { label: "University", key: "university", required: true },
-                                    { label: "Location", key: "location" },
-                                    { label: "Start Date (MM/YYYY)", key: "startDate", required: true },
-                                    { label: "End Date (MM/YYYY)", key: "endDate", required: true },
+                                    {label: "Degree", key: "degree", required: true},
+                                    {label: "Field of Study", key: "field", required: true},
+                                    {label: "University", key: "university", required: true},
+                                    {label: "Location", key: "location"},
+                                    {label: "Start Date (MM/YYYY)", key: "startDate", required: true},
+                                    {label: "End Date (MM/YYYY)", key: "endDate", required: true},
                                 ].map((field) => (
                                     <div key={field.key}>
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">{field.label}</label>
+                                        <label
+                                            className="block text-sm font-medium text-gray-600 mb-1">{field.label}</label>
                                         <input
                                             type="text"
                                             className={`w-full px-3 py-2 border ${errors[`educations.${eduIndex}.${field.key}`] ? 'border-red-500' : 'border-gray-200'} rounded-md focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-teal-600`}
@@ -807,7 +867,8 @@ function ResumeForm() {
                             </div>
 
                             <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-600 mb-1">Project Description</label>
+                                <label className="block text-sm font-medium text-gray-600 mb-1">Project
+                                    Description</label>
                                 <textarea
                                     className={`w-full px-3 py-2 border ${errors[`projects.${currentProjectIndex}.description`] ? 'border-red-500' : 'border-gray-200'} rounded-md focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-teal-600 min-h-[100px]`}
                                     value={formData.projects[currentProjectIndex].description}
@@ -820,10 +881,12 @@ function ResumeForm() {
                             </div>
 
                             <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-600 mb-2">Technologies Used</label>
+                                <label className="block text-sm font-medium text-gray-600 mb-2">Technologies
+                                    Used</label>
                                 <div className="flex flex-wrap gap-2 mb-2">
                                     {formData.projects[currentProjectIndex].technologies.map((tech, techIndex) => (
-                                        <div key={techIndex} className="bg-gray-50 text-gray-700 px-3 py-1 rounded-full flex items-center border border-gray-200">
+                                        <div key={techIndex}
+                                             className="bg-gray-50 text-gray-700 px-3 py-1 rounded-full flex items-center border border-gray-200">
                                             {tech}
                                             <button
                                                 type="button"
@@ -875,13 +938,14 @@ function ResumeForm() {
                         <div key={certIndex} className="mb-6 pb-4 border-b border-gray-100 last:border-b-0 last:pb-0">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 {[
-                                    { label: "Certification Name", key: "name", required: true },
-                                    { label: "Issuer", key: "issuer", required: true },
-                                    { label: "Date (MM/YYYY)", key: "date" },
-                                    { label: "Link", key: "link" },
+                                    {label: "Certification Name", key: "name", required: true},
+                                    {label: "Issuer", key: "issuer", required: true},
+                                    {label: "Date (MM/YYYY)", key: "date"},
+                                    {label: "Link", key: "link"},
                                 ].map((field) => (
                                     <div key={field.key}>
-                                        <label className="block text-sm font-medium text-gray-600 mb-1">{field.label}</label>
+                                        <label
+                                            className="block text-sm font-medium text-gray-600 mb-1">{field.label}</label>
                                         <input
                                             type="text"
                                             className={`w-full px-3 py-2 border ${errors[`certifications.${certIndex}.${field.key}`] ? 'border-red-500' : 'border-gray-200'} rounded-md focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-teal-600`}
@@ -934,7 +998,8 @@ function ResumeForm() {
                                     )}
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-600 mb-1">Proficiency Level</label>
+                                    <label className="block text-sm font-medium text-gray-600 mb-1">Proficiency
+                                        Level</label>
                                     <input
                                         type="text"
                                         className={`w-full px-3 py-2 border ${errors[`languages.${langIndex}.level`] ? 'border-red-500' : 'border-gray-200'} rounded-md focus:outline-none focus:ring-1 focus:ring-teal-600 focus:border-teal-600`}
@@ -968,12 +1033,21 @@ function ResumeForm() {
                 </div>
 
                 <div className="flex justify-center gap-4">
-                    <button
-                        type="submit"
-                        className="bg-teal-600 text-white px-8 py-3 rounded-md hover:bg-teal-700 text-lg font-medium transition-colors shadow-md hover:shadow-lg"
-                    >
-                        Generate Resume
-                    </button>
+                    {
+                        loading
+                            ? <div className="flex items-center space-x-2">
+                                <div
+                                    className="w-5 h-5 border-2 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
+                                <span className="text-teal-500">Yuklanmoqda...</span>
+                            </div>
+                            :
+                            <button
+                                type="submit"
+                                className="bg-teal-600 text-white px-8 py-3 rounded-md hover:bg-teal-700 text-lg font-medium transition-colors shadow-md hover:shadow-lg"
+                            >
+                                Generate Resume
+                            </button>
+                    }
                 </div>
             </form>
         </div>
