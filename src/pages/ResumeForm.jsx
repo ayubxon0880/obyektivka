@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import CopyButton from '../component/Button';
 import axios from "axios";
+import {API} from "../env.jsx";
 
 const VALIDATIONS = {
     email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
@@ -68,6 +69,7 @@ function ResumeForm() {
     const [showRestorePrompt, setShowRestorePrompt] = useState(false);
     const [shouldSave, setShouldSave] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [username, setUsername] = useState(null);
 
     useEffect(() => {
         const saved = localStorage.getItem("formData");
@@ -483,7 +485,6 @@ function ResumeForm() {
         });
 
         setErrors(newErrors);
-        console.log(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
@@ -498,7 +499,7 @@ function ResumeForm() {
 
         try {
             const response = await axios.post(
-                'https://qaxvachi.uz/api/v1/resume/generate',
+                `${API}/resume/generate`,
                 {...formData, summary: formData.summary.text},
                 {
                     responseType: 'blob',
@@ -507,6 +508,8 @@ function ResumeForm() {
                     }
                 }
             );
+
+            setUsername(response.headers['username']);
 
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');

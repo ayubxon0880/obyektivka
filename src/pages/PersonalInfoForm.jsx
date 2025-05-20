@@ -40,7 +40,6 @@ const PersonalInfoForm = () => {
 
     const validateStep = (step) => {
         const newErrors = {};
-        console.log(formData);
         if (step === 1) {
             if (!formData.familya) newErrors.familya = 'Familya kiritilishi shart';
             if (!formData.ism) newErrors.ism = 'Ism kiritilishi shart';
@@ -213,7 +212,6 @@ const PersonalInfoForm = () => {
             mehnatFaoliyati: workExperiences
         };
         generatePDF(finalData,workExperiences).then((res) => {
-            console.log(res);
             setLoading(false);
         });
     };

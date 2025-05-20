@@ -28,6 +28,7 @@ function App() {
               <Routes>
                     {/*<Route path="/" element={<Portfolio />} />*/}
                   <Route path="/" element={<ResumeForm />} />
+                  <Route path="/profile/*" element={<Portfolio />} />
               </Routes>
             </div>
 
