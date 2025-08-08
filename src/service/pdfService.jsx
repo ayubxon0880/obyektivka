@@ -183,5 +183,5 @@ export const generateOneColumnResumePdf = (formData) => {
         });
     }
 
-    doc.save("Resume.pdf");
+    doc.save("Resume360.pdf");
 };
