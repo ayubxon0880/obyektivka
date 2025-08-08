@@ -1,283 +1,187 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import uploadFile from "./fileService.jsx";
 
-export async function generatePDF(formData, workExperiences) {
+export const generateOneColumnResumePdf = (formData) => {
     const doc = new jsPDF();
-    let currentPage = 1;
-    const maxPages = 2;
-    let y = 30;
+    let y = 20;
+    const pageWidth = doc.internal.pageSize.getWidth();
 
-    const checkPageBreak = (requiredSpace) => {
-        if (y + requiredSpace > 280 && currentPage < maxPages) {
-            doc.addPage();
-            currentPage++;
-            y = 30;
-            return true;
-        }
-        return false;
+    // Helper - Section title
+    const addSectionTitle = (title) => {
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.text(title, 10, y);
+        y += 2;
+        doc.setDrawColor(200, 200, 200);
+        doc.setLineWidth(0.5);
+        doc.line(10, y, pageWidth - 10, y);
+        y += 6;
     };
 
-    if (formData.photo && currentPage === 1) {
-        try {
-            const imageData = await toBase64(formData.photo);
-            doc.addImage(imageData, "JPEG", 150, 10, 40, 50);
-        } catch (error) {
-            console.error("Error processing photo:", error);
-        }
+    // ===== HEADER =====
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    doc.text(formData.personalInformation.fullName || "Full Name", 10, y);
+    y += 8;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+
+    // Aloqa ma'lumotlari alohida qatorda
+    if (formData.personalInformation.phoneNumber) {
+        doc.text(formData.personalInformation.phoneNumber, 10, y);
+        y += 5;
+    }
+    if (formData.personalInformation.email) {
+        doc.text(formData.personalInformation.email, 10, y);
+        y += 5;
+    }
+    if (formData.personalInformation.location) {
+        doc.text(formData.personalInformation.location, 10, y);
+        y += 5;
+    }
+    if (formData.personalInformation.linkedin) {
+        doc.text(formData.personalInformation.linkedin, 10, y);
+        y += 5;
+    }
+    if (formData.personalInformation.github) {
+        doc.text(formData.personalInformation.github, 10, y);
+        y += 5;
+    }
+    if (formData.personalInformation.portfolio) {
+        doc.text(formData.personalInformation.portfolio, 10, y);
+        y += 10;
     }
 
-    if (currentPage === 1) {
-        doc.setFont("Times", "bold");
-        doc.setFontSize(14);
-        doc.text("MA'LUMOTNOMA", 105, 20, null, null, "center");
+    // ===== SUMMARY =====
+    if (formData.summary?.text) {
+        addSectionTitle("Summary");
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        const summaryLines = doc.splitTextToSize(formData.summary.text, pageWidth - 20);
+        doc.text(summaryLines, 10, y);
+        y += doc.getTextDimensions(summaryLines).h + 6;
     }
 
-    const personalInfo = [
-        formData.familya && formData.ism && formData.sharif && {
-            label: "Familiyasi, ismi, sharifi:", 
-            value: `${formData.familya} ${formData.ism} ${formData.sharif}`
-        },
-        formData.joriyIshJoyi && {
-            label: "Joriy ish joyi:", 
-            value: formData.joriyIshJoyi
-        },
-        formData.joriyLavozimToLiq && {
-            label: "Lavozimi:", 
-            value: formData.joriyLavozimToLiq
-        },
-        formData.joriyLavozimSanasi && {
-            label: "Ish boshlagan sanasi:", 
-            value: formData.joriyLavozimSanasi
-        },
-        formData.tugilganSana && {
-            label: "Tug'ilgan sanasi:", 
-            value: formData.tugilganSana
-        },
-        formData.tugilganJoyi && {
-            label: "Tug'ilgan joyi:", 
-            value: formData.tugilganJoyi
-        },
-        formData.hozirgiYashashJoyi && {
-            label: "Hozirgi yashash joyi:", 
-            value: formData.hozirgiYashashJoyi
-        },
-        formData.millati && {
-            label: "Millati:", 
-            value: formData.millati
-        },
-        formData.malumoti && {
-            label: "Ma'lumoti:", 
-            value: formData.malumoti
-        },
-        formData.telefon && {
-            label: "Telefon:", 
-            value: formData.telefon
-        }
-    ].filter(Boolean);
+    // ===== WORK EXPERIENCE =====
+    if (formData.experiences?.length) {
+        addSectionTitle("Work Experience");
+        formData.experiences.forEach(exp => {
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(12);
+            doc.text(`${exp.position} — ${exp.company}`, 10, y);
+            y += 5;
 
-    doc.setFont("Times", "normal");
-    doc.setFontSize(12);
+            doc.setFont("helvetica", "italic");
+            doc.setFontSize(10);
+            doc.text(`${exp.location} | ${exp.startDate} - ${exp.endDate}`, 10, y);
+            y += 5;
 
-    personalInfo.forEach(info => {
-        checkPageBreak(8);
-        doc.text(info.label, 15, y);
-        doc.text(info.value, 80, y);
-        y += 8;
-    });
-
-    if (formData.tamomlagan?.length > 0) {
-        checkPageBreak(15);
-        doc.setFont("Times", "bold");
-        doc.text("Ta'lim:", 15, y); 
-        y += 6;
-        doc.setFont("Times", "normal");
-        
-        formData.tamomlagan.forEach((edu) => {
-            if (edu.institution) {
-                checkPageBreak(8);
-                const currentlyStudying = edu.currentlyStudying ? "Hozirgi kunda o'qiyapti" : "";
-                const eduText = `${edu.institution}${edu.startDate || edu.endDate ? ` (${edu.startDate || ''} - ${edu.endDate || ''})` : ''}${currentlyStudying ? `, ${currentlyStudying}` : ''}${edu.specialization ? `, ${edu.specialization}` : ''}`;
-                doc.text(`• ${eduText}`, 20, y);
-                y += 6;
-            }
-        });
-    }
-
-    const professionalSections = [
-        formData.mutaxassisligi && {
-            title: "Mutaxassisligi:", 
-            content: formData.mutaxassisligi
-        },
-        formData.ilmiyDarajasi?.length > 0 && {
-            title: "Ilmiy darajasi:", 
-            content: formData.ilmiyDarajasi
-        },
-        formData.ilmiyUnvoni?.length > 0 && {
-            title: "Ilmiy unvoni:", 
-            content: formData.ilmiyUnvoni
-        },
-        formData.chetTillari?.length > 0 && {
-            title: "Chet tillari:", 
-            content: formData.chetTillari.map(lang => `${lang.language} - ${lang.level}`)
-        },
-        formData.mukofotlari?.length > 0 && {
-            title: "Mukofotlar:", 
-            content: formData.mukofotlari
-        }
-    ].filter(Boolean);
-    
-    const sectionSpacing = 5;
-    const lineHeight = 7;
-    
-    professionalSections.forEach(section => {
-        checkPageBreak(sectionSpacing + lineHeight);
-        
-        doc.setFont("Times", "bold");
-        doc.text(section.title, 15, y);
-        y += lineHeight;
-        
-        doc.setFont("Times", "normal");
-        
-        const contentArray = Array.isArray(section.content) ? section.content : [section.content];
-        
-        contentArray.forEach(item => {
-            if (item) {
-                checkPageBreak(lineHeight);
-                doc.text(`• ${item}`, 20, y);
-                y += lineHeight;
-            }
-        });
-        
-        y += sectionSpacing;
-    });
-
-    const hasWorkExperiences = (formData.joriyIshJoyi && formData.joriyLavozimToLiq) ||
-                              (workExperiences && workExperiences.length > 0);
-    
-    if (hasWorkExperiences) {
-        checkPageBreak(15);
-        doc.setFont("Times", "bold");
-        doc.text("MEHNAT FAOLIYATI:", 15, y); 
-        y += 6;
-        doc.setFont("Times", "normal");
-
-        if (formData.joriyIshJoyi && formData.joriyLavozimToLiq) {
-            const period = formData.joriyLavozimTugashSanasi === 'now' 
-                ? `${formData.joriyLavozimSanasi || ''} - Hozirgacha` 
-                : `${formData.joriyLavozimSanasi || ''} - ${formData.joriyLavozimTugashSanasi || ''}`;
-            
-            doc.text(`• ${period}: ${formData.joriyLavozimToLiq}${formData.joriyIshJoyi ? ` (${formData.joriyIshJoyi})` : ''}`, 20, y);
-            y += 6;
-        }
-
-        if (workExperiences?.length > 0) {
-            workExperiences.forEach(exp => {
-                if (exp.position) {
-                    checkPageBreak(8);
-                    const period = exp.endYear === 'now'
-                        ? `${exp.startYear || ''} - Hozirgacha`
-                        : `${exp.startYear || ''} - ${exp.endYear || ''}`;
-                    const companyInfo = exp.company ? ` (${exp.company})` : '';
-                    doc.text(`• ${period}: ${exp.position}${companyInfo}`, 20, y);
-                    y += 6;
-                }
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            exp.description.forEach(line => {
+                doc.text(`• ${line}`, 12, y);
+                y += 4;
             });
-        }
+            y += 4;
+        });
     }
 
-    if (formData.qarindoshlar?.length > 0) {
-        checkPageBreak(40);
-        const relatives = formData.qarindoshlar.map(rel => [
-            rel.qarindoshligi || '',
-            rel.fish || '',
-            rel.tugilganYiliVaJoyi || '',
-            rel.ishJoyiVaLavozimi || '',
-            rel.turarJoyi || '',
-            rel.vafotEtgan ? "Ha" : "Yo'q"
-        ]);
+    // ===== PROJECTS =====
+    if (formData.projects?.length) {
+        addSectionTitle("Projects");
+        formData.projects.forEach(proj => {
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(12);
+            doc.text(proj.name, 10, y);
+            y += 5;
 
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            const projDesc = doc.splitTextToSize(proj.description, pageWidth - 20);
+            doc.text(projDesc, 10, y);
+            y += doc.getTextDimensions(projDesc).h + 2;
+
+            if (proj.technologies?.length) {
+                doc.text(`Tech: ${proj.technologies.join(", ")}`, 10, y);
+                y += 4;
+            }
+            if (proj.link) {
+                doc.text(`Link: ${proj.link}`, 10, y);
+                y += 4;
+            }
+            y += 3;
+        });
+    }
+
+    // ===== EDUCATION =====
+    if (formData.educations?.length) {
+        addSectionTitle("Education");
+        formData.educations.forEach(edu => {
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(12);
+            doc.text(`${edu.degree} in ${edu.field}`, 10, y);
+            y += 5;
+
+            doc.setFont("helvetica", "italic");
+            doc.setFontSize(10);
+            doc.text(`${edu.university} — ${edu.location}`, 10, y);
+            y += 5;
+
+            doc.text(`${edu.startDate} - ${edu.endDate}`, 10, y);
+            y += 8;
+        });
+    }
+
+    // ===== SKILLS =====
+    if (formData.skills?.length) {
+        addSectionTitle("Skills");
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        formData.skills.forEach(skill => {
+            doc.text(`• ${skill}`, 10, y);
+            y += 4;
+        });
+        y += 4;
+    }
+
+    // ===== LANGUAGES =====
+    if (formData.languages?.length) {
+        addSectionTitle("Languages");
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        formData.languages.forEach(lang => {
+            doc.text(`${lang.language} — ${lang.level}`, 10, y);
+            y += 5;
+        });
+        y += 4;
+    }
+
+    // ===== CERTIFICATIONS =====
+    if (formData.certifications?.length) {
+        addSectionTitle("Certifications");
         autoTable(doc, {
             startY: y,
-            head: [["Qarindoshligi", "F.I.SH", "Tug'ilgan yili va joyi", "Ish joyi va lavozimi", "Turar joyi", "Vafot etgan"]],
-            body: relatives,
-            styles: { font: "times", fontSize: 10 },
-            headStyles: { fillColor: [41, 128, 185] },
-            didDrawPage: (data) => { y = data.cursor.y + 10; }
+            head: [["Name", "Issuer", "Date", "Link"]],
+            body: formData.certifications.map(c => [
+                c.name, c.issuer, c.date, c.link
+            ]),
+            styles: { fontSize: 10, cellPadding: 2 },
+            headStyles: { fillColor: [240, 240, 240], textColor: 0, fontStyle: "bold" }
+        });
+        y = doc.lastAutoTable.finalY + 6;
+    }
+
+    // ===== EXTRA SECTIONS (Awards, Activities, etc.) =====
+    if (formData.awards?.length) {
+        addSectionTitle("Awards & Activities");
+        formData.awards.forEach(a => {
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(11);
+            doc.text(`• ${a}`, 10, y);
+            y += 5;
         });
     }
 
-    const additionalSections = [
-        formData.kuchliTaraflari?.length > 0 && {
-            title: "Kuchli tomonlari:", 
-            content: formData.kuchliTaraflari
-        },
-        formData.kuchsizTaraflari?.length > 0 && {
-            title: "Kuchsiz tomonlari:", 
-            content: formData.kuchsizTaraflari
-        },
-        formData.professionalQobiliyatlari?.length > 0 && {
-            title: "Professional qobiliyatlari:", 
-            content: formData.professionalQobiliyatlari
-        },
-        formData.shaxsiyFazilatlari?.length > 0 && {
-            title: "Shaxsiy fazilatlari:", 
-            content: formData.shaxsiyFazilatlari
-        },
-        formData.qiziqishlari && {
-            title: "Qiziqishlari:", 
-            content: [formData.qiziqishlari]
-        },
-        formData.qoshimchaMalumot && {
-            title: "Qo'shimcha ma'lumot:", 
-            content: [formData.qoshimchaMalumot]
-        }
-    ].filter(Boolean);
-
-    additionalSections.forEach(section => {
-        checkPageBreak(15);
-        doc.setFont("Times", "bold");
-        doc.text(section.title, 15, y); 
-        y += 6;
-        doc.setFont("Times", "normal");
-
-        const contentArray = Array.isArray(section.content) ? section.content : [section.content];
-        
-        contentArray.forEach(item => {
-            if (item) {
-                const lines = doc.splitTextToSize(item, 170);
-                lines.forEach(line => {
-                    checkPageBreak(8);
-                    doc.text(`• ${line}`, 20, y);
-                    y += 6;
-                });
-            }
-        });
-    });
-
-    const pdfBlob = doc.output('blob');
-    const file = new File([pdfBlob], "resume360.pdf", { type: "application/pdf" });
-
-    let formDataForBackend = { ...formData };
-    formDataForBackend.photo = null;
-    formDataForBackend.chetTillari = formData.chetTillari?.map(t => `${t.language}:${t.level}`) || [];
-
-    const result = await uploadFile(file, JSON.stringify(formDataForBackend));
-
-    if (result.success) {
-        doc.save("resume360.pdf");
-        return true;
-    } else {
-        alert(`Xatolik yuz berdi, qaytadan urinib ko'ring, rasm hajmi 10MB dan oshmaslik kerak!`);
-        return false;
-    }
-}
-
-function toBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
-}
+    doc.save("Resume.pdf");
+};

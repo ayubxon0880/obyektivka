@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import CopyButton from '../component/Button';
-import axios from "axios";
-import {API} from "../env.jsx";
-
+import {generateOneColumnResumePdf} from "../service/pdfService.jsx";
 const VALIDATIONS = {
     email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     url: /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?$/,
@@ -69,7 +67,6 @@ function ResumeForm() {
     const [showRestorePrompt, setShowRestorePrompt] = useState(false);
     const [shouldSave, setShouldSave] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [username, setUsername] = useState(null);
 
     useEffect(() => {
         const saved = localStorage.getItem("formData");
@@ -498,27 +495,28 @@ function ResumeForm() {
         }
 
         try {
-            const response = await axios.post(
-                `${API}/resume/generate`,
-                {...formData, summary: formData.summary.text},
-                {
-                    responseType: 'blob',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                }
-            );
+            // const response = await axios.post(
+            //     `${API}/resume/generate`,
+            //     {...formData, summary: formData.summary.text},
+            //     {
+            //         responseType: 'blob',
+            //         headers: {
+            //             'Content-Type': 'application/json',
+            //         }
+            //     }
+            // );
+            // setUsername(response.headers['username']);
+            //
+            // const url = window.URL.createObjectURL(new Blob([response.data]));
+            // const link = document.createElement('a');
+            // link.href = url;
+            // link.setAttribute('download', 'resume.pdf');
+            // document.body.appendChild(link);
+            // link.click();
+            // link.parentNode.removeChild(link);
+            // window.URL.revokeObjectURL(url);
 
-            setUsername(response.headers['username']);
-
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'resume.pdf');
-            document.body.appendChild(link);
-            link.click();
-            link.parentNode.removeChild(link);
-            window.URL.revokeObjectURL(url);
+            generateOneColumnResumePdf(formData)
         } catch (error) {
             console.error('Error generating resume:', error);
             alert('Error generating resume. Please check your input and try again.');
