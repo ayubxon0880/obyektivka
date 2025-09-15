@@ -13,13 +13,14 @@
     "@craco/craco": "^7.1.0",
     "@heroicons/react": "^2.2.0",
     "@tailwindcss/vite": "^4.1.1",
+    "@vercel/analytics": "^1.5.0",
     "axios": "^1.8.4",
     "docx": "^9.3.0",
     "file-saver": "^2.0.5",
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-helmet": "^6.1.0",
     "react-router-dom": "^7.5.3",
     "react-select": "^5.10.1",
@@ -36,6 +37,7 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
+    "typescript": "^5.9.2",
     "vite": "^6.2.0"
   }
 }
